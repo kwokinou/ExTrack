@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">ExpenseTracker</string>
+    <string name="expenses">Expenses</string>
+    <string name="categories">Categories</string>
+    <string name="action_search">Search</string>
+    <string name="action_add">Add</string>
+    <string name="action_sort">Sort</string>
+    <string name="action_save">Save</string>
+    <string name="vendor_name">Vendor name</string>
+    <string name="exp_type">Expense type</string>
+    <string name="trans_date">Transaction Date(Ex 11/20/16)</string>
+    <string name="currency">Currency type</string>
+    <string name="amount">Amount</string>
+    <string name="attach_receipt">Attach Receipt</string>
+    <string name="search_hint">Search for...</string>
+</resources>
