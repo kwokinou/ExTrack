@@ -1,5 +1,6 @@
 package umbf16cs443.extrack;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -47,23 +48,17 @@ public class ViewExpFragment extends ListFragment {
         switch (item.getItemId()){
 
             //user clicked on add an expense action button
+            //switch to new activity to get user input for new expense
             case R.id.add:
-                //update framelayout with addExpFrag
-                AddExpenseFragment addExpFrag = new AddExpenseFragment();
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, addExpFrag);
-                transaction.addToBackStack(null);
-                transaction.commit();
+                Intent i = new Intent(getActivity(), AddExpActivity.class);
+                startActivity(i);
                 break;
 
             //user clicked on search an expense action button
+            //switch to new activity to get user input for search expenses
             case R.id.search:
-                //update framelayout with searchExpFrag
-                SearchExpenseFragment searchExpFrg = new SearchExpenseFragment();
-                FragmentTransaction transaction1 = getFragmentManager().beginTransaction();
-                transaction1.replace(R.id.fragment_container, searchExpFrg);
-                transaction1.addToBackStack(null);
-                transaction1.commit();
+                Intent j = new Intent(getActivity(), SearchExpActivity.class);
+                startActivity(j);
                 break;
 
             default:

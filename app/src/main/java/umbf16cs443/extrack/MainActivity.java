@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    //user clicked on Expenses
+    //user clicked on Categories
     public void viewCats(View view){
 
         //update the two main buttons colors

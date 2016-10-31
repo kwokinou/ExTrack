@@ -1,5 +1,6 @@
 package umbf16cs443.extrack;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -49,23 +50,17 @@ public class ViewCatFragment extends ListFragment {
         switch (item.getItemId()){
 
             //user clicked on add an expense action button
+            //switch to new activity to get user input for new category
             case R.id.add:
-                //update framelayout with addCatFrag
-                AddCategoryFragment addCatFrag = new AddCategoryFragment();
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, addCatFrag);
-                transaction.addToBackStack(null);
-                transaction.commit();
+                Intent i = new Intent(getActivity(), AddCatActivity.class);
+                startActivity(i);
                 break;
 
             //user clicked on search an expense action button
+            //switch to new activity to get user input for search categories
             case R.id.search:
-                //update framelayout with searchCatFrag
-                SearchCategoryFragment searchExpFrg = new SearchCategoryFragment();
-                FragmentTransaction transaction1 = getFragmentManager().beginTransaction();
-                transaction1.replace(R.id.fragment_container, searchExpFrg);
-                transaction1.addToBackStack(null);
-                transaction1.commit();
+                Intent j = new Intent(getActivity(), SearchCatActivity.class);
+                startActivity(j);
                 break;
 
             default:
