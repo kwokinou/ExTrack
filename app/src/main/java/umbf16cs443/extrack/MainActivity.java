@@ -7,18 +7,23 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import umbf16cs443.extrack.db.DBHelper;
+
 public class MainActivity extends AppCompatActivity {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         //Initially fill Framelayout with a simple helper message
         HelpMsgFragment newFragment = new HelpMsgFragment();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, newFragment);
         transaction.commit();
+        
+
+
     }
 
     //user clicked on Expenses

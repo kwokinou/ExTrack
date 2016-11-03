@@ -11,10 +11,18 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+
+import umbf16cs443.extrack.db.DBHelper; //db helper
+import umbf16cs443.extrack.db.models.Category; //add category model
+
 
 import umbf16cs443.extrack.R;
 
 public class AddCategoryFragment extends Fragment {
+
+    EditText input;
+    DBHelper db;
 
     //initial set up to prompt user to input info for new category
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -26,9 +34,17 @@ public class AddCategoryFragment extends Fragment {
     //set up "save" action button
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
         inflater.inflate(R.menu.save_action_btn, menu);
+
         super.onCreateOptionsMenu(menu,inflater);
     }
-
-    //need to implement onOptionsItemSelected to process "save".
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+       input = (EditText) getView().findViewById(R.id.category);
+       Category category = new Category(input.getText().toString());
+       db = new DBHelper(getContext());
+       db.addCategory(category);
+       return true;
+    }
+//    //need to implement onOptionsItemSelected to process "save".
     // An Expense object will be created and added to database.
 }
