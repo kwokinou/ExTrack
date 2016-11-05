@@ -15,4 +15,5 @@
     <string name="attach_receipt">Attach Receipt</string>
     <string name="search_hint">Search for...</string>
     <string name="category">Enter category name</string>
+    <string name="limit">Enter total cost limit</string>
 </resources>

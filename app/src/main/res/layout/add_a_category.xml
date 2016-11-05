@@ -10,4 +10,10 @@
         android:id="@+id/category"
         android:hint="@string/category" />
 
+    <EditText
+        android:layout_width="310dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/cost_limit"
+        android:hint="@string/limit" />
+
 </LinearLayout>
