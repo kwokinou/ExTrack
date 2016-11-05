@@ -9,10 +9,11 @@
     <string name="action_save">Save</string>
     <string name="vendor_name">Vendor name</string>
     <string name="exp_type">Expense type</string>
-    <string name="trans_date">Transaction Date(Ex 11/20/16)</string>
+    <string name="select_date">Select Date</string>
     <string name="currency">Currency type</string>
     <string name="amount">Amount</string>
     <string name="attach_receipt">Attach Receipt</string>
     <string name="search_hint">Search for...</string>
     <string name="category">Enter category name</string>
+    <string name="limit">Enter total cost limit</string>
 </resources>

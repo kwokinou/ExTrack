@@ -16,13 +16,19 @@
         android:id="@+id/expType"
         android:hint="@string/exp_type" />
 
-    <EditText
-        android:layout_width="270dp"
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="date"
-        android:ems="10"
-        android:id="@+id/transDate"
-        android:hint="@string/trans_date" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/transDate" />
+
+    <Button
+        android:id="@+id/picDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/select_date"
+        android:onClick="pickDate"
+        />
 
     <EditText
         android:layout_width="197dp"
