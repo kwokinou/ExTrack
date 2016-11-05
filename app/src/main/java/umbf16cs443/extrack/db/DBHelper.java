@@ -14,6 +14,14 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+//This method is pretty massive and could probably be broken up into sub-methods
+//for easier readability.  That being said, I would suggest consulting the API
+//documentation on the github wiki for method explanations.
+
+//  https://github.com/kwokinou/ExTrack/wiki/DBHelper
+
+
+
 public class DBHelper extends SQLiteOpenHelper {
     // Database Version
     private static final int DATABASE_VERSION = 1;
@@ -29,7 +37,8 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String KEY_CREATED_AT = "created_at";
 
     // EXPENSES TABLE
-    // Coming Soon
+
+
 
     // CATEGORIES Table - column names
     private static final String KEY_CAT_NAME = "category_name";
@@ -41,21 +50,40 @@ public class DBHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    // Categories table create statement
-    // Tag table create statement
+// ####################################################################### //
+// DATABASE CREATION STRINGS
+// ####################################################################### //
+// Just one big concatination of sub-strings to make variables for SQL
+// creation statements
+
     private static final String CREATE_TABLE_CATEGORIES = "CREATE TABLE " +
             TABLE_CATEGORIES + "(" + KEY_ID + " INTEGER PRIMARY KEY," +
             KEY_CAT_NAME + " TEXT,"
             + KEY_CREATED_AT + " DATETIME" + ")";
 
+    //todo expense table
+    private static final String CREATE_TABLE_EXPENSES = "CREATE TABLE " +
+            TABLE_EXPENSES + "(" + KEY_ID + " INTEGER PRIMARY KEY," +
+            KEY_CAT_NAME + " TEXT," + KEY_CREATED_AT + " DATETIME" + ")";
+
+    //todo report table
+
+    //todo relational tables
+
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+
+
+        //todo: these
 
         // creating required tables
 //        db.execSQL(CREATE_TABLE_EXPENSES);
         db.execSQL(CREATE_TABLE_CATEGORIES);
 //        db.execSQL(CREATE_TABLE_REPORTS);
+
+// todo implement relation tables
+
     }
 
     @Override
@@ -168,7 +196,8 @@ public class DBHelper extends SQLiteOpenHelper {
 // Expense Helper Method
 // ####################################################################### //
 
-// coming soon
+
+
 
 // ####################################################################### //
 // Report Helper Method

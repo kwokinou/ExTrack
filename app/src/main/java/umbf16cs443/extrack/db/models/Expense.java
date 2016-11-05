@@ -66,22 +66,22 @@ public class Expense {
 
     // Helper Methods for converting Objects to primitives for database
 
-    public void setDate(Date date){
+    public void setDate(Date date) {
         this.exDateStamp = date.getTime();
     }
 
-    public void setCurrency(Currency currency){
+    public void setCurrency(Currency currency) {
         this.exCurrencyCode = currency.getCurrencyCode();
 
     }
 
-    public Currency getCurrency(){
+    public Currency getCurrency() {
         Currency currency = null;
         currency = currency.getInstance(exCurrencyCode);
         return currency;
     }
 
-    public Date getDate(){
+    public Date getDate() {
         Date date = new Date(exDateStamp);
         return date;
     }

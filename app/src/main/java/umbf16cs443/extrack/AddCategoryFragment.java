@@ -43,6 +43,7 @@ public class AddCategoryFragment extends Fragment {
        Category category = new Category(input.getText().toString());
        db = new DBHelper(getContext());
        db.addCategory(category);
+       db.close();
        return true;
     }
 //    //need to implement onOptionsItemSelected to process "save".

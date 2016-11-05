@@ -10,4 +10,5 @@
         android:id="@+id/category"
         android:hint="@string/category" />
 
+
 </LinearLayout>
