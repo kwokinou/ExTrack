@@ -10,6 +10,11 @@
         app:showAsAction="always"
         />
 
+    <item android:id="@+id/delete"
+        android:icon="@drawable/ic_clear_black_24dp"
+        android:title="@string/action_delete"
+        app:showAsAction="always"/>
+
     <item
         android:id="@+id/sort"
         android:icon="@drawable/ic_swap_vert_black_24dp"
