@@ -21,7 +21,6 @@ import java.util.List;
 //  https://github.com/kwokinou/ExTrack/wiki/DBHelper
 
 
-
 public class DBHelper extends SQLiteOpenHelper {
     // Database Version
     private static final int DATABASE_VERSION = 1;
@@ -36,15 +35,28 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String KEY_ID = "id";
     private static final String KEY_CREATED_AT = "created_at";
 
-    // EXPENSES TABLE
-
-
 
     // CATEGORIES Table - column names
     private static final String KEY_CAT_NAME = "category_name";
 
+    // EXPENSES Table - column names
+    private static final String KEY_VENDOR = "expenses_vendor";
+    private static final String KEY_CURRENCY = "expenses_currency";
+    private static final String KEY_AMOUNT = "expenses_amount";
+    private static final String KEY_RECEIPT = "expenses_receipt";
+    private static final String KEY_EXYEAR = "expense_year";
+    private static final String KEY_EXMONTH = "expense_month";
+    private static final String KEY_EXDAY = "expense_day";
+
+
     // REPORTS Table - column names
+    private static final String KEY_REPORT_NAME = "report_name";
+    //start date
+    //end date
+
+
     // Coming Soon
+
 
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -63,8 +75,16 @@ public class DBHelper extends SQLiteOpenHelper {
 
     //todo expense table
     private static final String CREATE_TABLE_EXPENSES = "CREATE TABLE " +
-            TABLE_EXPENSES + "(" + KEY_ID + " INTEGER PRIMARY KEY," +
-            KEY_CAT_NAME + " TEXT," + KEY_CREATED_AT + " DATETIME" + ")";
+            TABLE_EXPENSES + "(" +
+            KEY_ID + " INTEGER PRIMARY KEY," +
+            KEY_VENDOR + " TEXT," +
+            KEY_CURRENCY + " INTEGER," +
+            KEY_AMOUNT + " REAL," +
+            KEY_RECEIPT + " TEXT," +
+            KEY_EXYEAR + " INTEGER" +
+            KEY_EXMONTH + " INTEGER" +
+            KEY_EXDAY + " INTEGER" +
+            KEY_CREATED_AT + " DATETIME" + ")";
 
     //todo report table
 
@@ -74,11 +94,10 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-
         //todo: these
 
         // creating required tables
-//        db.execSQL(CREATE_TABLE_EXPENSES);
+        db.execSQL(CREATE_TABLE_EXPENSES);
         db.execSQL(CREATE_TABLE_CATEGORIES);
 //        db.execSQL(CREATE_TABLE_REPORTS);
 
@@ -189,13 +208,127 @@ public class DBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-}
-
 
 // ####################################################################### //
 // Expense Helper Method
 // ####################################################################### //
 
+    public void addExpense(Expense expense) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put(KEY_VENDOR, expense.getExVendor());
+        values.put(KEY_CURRENCY, expense.getExCurrencyCode());
+        values.put(KEY_AMOUNT, expense.getExAmount());
+        values.put(KEY_RECEIPT, expense.getExReceipt());
+        values.put(KEY_EXYEAR, expense.getExYear());
+        values.put(KEY_EXMONTH, expense.getExMonth());
+        values.put(KEY_EXDAY, expense.getExDay());
+
+        db.insert(TABLE_EXPENSES, null, values);
+        db.close();
+
+        //todo map categories
+    }
+
+    public Expense fetchExpense(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        Cursor cursor = db.query(TABLE_EXPENSES, null,
+                KEY_ID + "=?",
+                new String[]{String.valueOf(id)}, null, null, null, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        Expense expense = new Expense(
+                Integer.parseInt(cursor.getString(0)),      //id
+                cursor.getString(1),                        //vendor
+                cursor.getString(2),                        //currency
+                Double.parseDouble(cursor.getString(3)),    //amount
+                cursor.getString(4),                        //receipt
+                Integer.parseInt(cursor.getString(5)),      //year
+                Integer.parseInt(cursor.getString(6)),      //month
+                Integer.parseInt(cursor.getString(7)),      //day
+                null                                        //todo getcategories
+
+
+        );
+        // return contact
+        return expense;
+    }
+
+    public List<Expense> getAllExpenses() {
+
+        List<Expense> expenseList = new ArrayList<Expense>();
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + TABLE_EXPENSES;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Expense expense = new Expense(
+                        Integer.parseInt(cursor.getString(0)),      //id
+                        cursor.getString(1),                        //vendor
+                        cursor.getString(2),                        //currency
+                        Double.parseDouble(cursor.getString(3)),    //amount
+                        cursor.getString(4),                        //receipt
+                        Integer.parseInt(cursor.getString(5)),      //year
+                        Integer.parseInt(cursor.getString(6)),      //month
+                        Integer.parseInt(cursor.getString(7)),      //day
+                        null                                        //todo getcategories
+                );
+                expenseList.add(expense);
+            } while (cursor.moveToNext());
+        }
+
+        // return contact list
+        return expenseList;
+
+    }
+
+    public int getExpenseCount() {
+        int num;
+
+        String countQuery = "SELECT  * FROM " + TABLE_EXPENSES;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+        num = cursor.getCount();
+        cursor.close();
+
+        // return count
+        return num;
+
+    }
+
+    public int updateExpense(Expense expense) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put(KEY_VENDOR, expense.getExVendor());
+        values.put(KEY_CURRENCY, expense.getExCurrencyCode());
+        values.put(KEY_AMOUNT, expense.getExAmount());
+        values.put(KEY_RECEIPT, expense.getExReceipt());
+        values.put(KEY_EXYEAR, expense.getExYear());
+        values.put(KEY_EXMONTH, expense.getExMonth());
+        values.put(KEY_EXDAY, expense.getExDay());;
+
+        // updating row
+        return db.update(TABLE_EXPENSES, values, KEY_ID + " = ?",
+                new String[]{String.valueOf(expense.getId())});
+
+    }
+
+    public void deleteExpense(Expense expense) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_EXPENSES, KEY_ID + " = ?",
+                new String[]{String.valueOf(expense.getId())});
+        db.close();
+    }
 
 
 
@@ -203,5 +336,5 @@ public class DBHelper extends SQLiteOpenHelper {
 // Report Helper Method
 // ####################################################################### //
 
-
+}
 //coming soon
