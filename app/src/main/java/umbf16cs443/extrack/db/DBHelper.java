@@ -1,5 +1,10 @@
 package umbf16cs443.extrack.db;
 
+// BE SURE TO CREDIT ICON CREATOR!!
+
+//<div>Icons made by <a href="http://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
+
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -29,7 +34,8 @@ public class DBHelper extends SQLiteOpenHelper {
     // Table Names
     private static final String TABLE_EXPENSES = "expenses";
     private static final String TABLE_CATEGORIES = "categories";
-    private static final String TABLE_REPORTS = "reports";
+
+//    private static final String TABLE_REPORTS = "reports";
 
     // Common column names
     private static final String KEY_ID = "id";
@@ -44,10 +50,11 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String KEY_CURRENCY = "expenses_currency";
     private static final String KEY_AMOUNT = "expenses_amount";
     private static final String KEY_RECEIPT = "expenses_receipt";
-    private static final String KEY_EXYEAR = "expense_year";
-    private static final String KEY_EXMONTH = "expense_month";
-    private static final String KEY_EXDAY = "expense_day";
-
+    //    private static final String KEY_EXYEAR = "expense_year";
+//    private static final String KEY_EXMONTH = "expense_month";
+//   private static final String KEY_EXDAY = "expense_day";
+    private static final String KEY_EXDATE = "expenses_date";
+    private static final String KEY_EXCAT = "expenses_category";
 
     // REPORTS Table - column names
     private static final String KEY_REPORT_NAME = "report_name";
@@ -81,9 +88,11 @@ public class DBHelper extends SQLiteOpenHelper {
             KEY_CURRENCY + " INTEGER," +
             KEY_AMOUNT + " REAL," +
             KEY_RECEIPT + " TEXT," +
-            KEY_EXYEAR + " INTEGER" +
-            KEY_EXMONTH + " INTEGER" +
-            KEY_EXDAY + " INTEGER" +
+            //          KEY_EXYEAR + " INTEGER" +
+            //           KEY_EXMONTH + " INTEGER" +
+            //           KEY_EXDAY + " INTEGER" +
+            KEY_EXDATE + " INTEGER" +
+            KEY_EXDATE + " INTEGER FOREIGN KEY" +
             KEY_CREATED_AT + " DATETIME" + ")";
 
     //todo report table
@@ -108,9 +117,9 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // on upgrade drop older tables
-//        db.execSQL("DROP TABLE IF EXISTS " + TABLE_EXPENSES);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_EXPENSES);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CATEGORIES);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_REPORTS);
+//        db.execSQL("DROP TABLE IF EXISTS " + TABLE_REPORTS);
 
         // create new tables
         onCreate(db);
@@ -222,9 +231,9 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(KEY_CURRENCY, expense.getExCurrencyCode());
         values.put(KEY_AMOUNT, expense.getExAmount());
         values.put(KEY_RECEIPT, expense.getExReceipt());
-        values.put(KEY_EXYEAR, expense.getExYear());
-        values.put(KEY_EXMONTH, expense.getExMonth());
-        values.put(KEY_EXDAY, expense.getExDay());
+//        values.put(KEY_EXYEAR, expense.getExYear());
+//        values.put(KEY_EXMONTH, expense.getExMonth());
+//        values.put(KEY_EXDAY, expense.getExDay());
 
         db.insert(TABLE_EXPENSES, null, values);
         db.close();
@@ -247,9 +256,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 cursor.getString(2),                        //currency
                 Double.parseDouble(cursor.getString(3)),    //amount
                 cursor.getString(4),                        //receipt
-                Integer.parseInt(cursor.getString(5)),      //year
-                Integer.parseInt(cursor.getString(6)),      //month
-                Integer.parseInt(cursor.getString(7)),      //day
+                Long.parseLong(cursor.getString(5)),      //dateStamp
                 null                                        //todo getcategories
 
 
@@ -276,10 +283,8 @@ public class DBHelper extends SQLiteOpenHelper {
                         cursor.getString(2),                        //currency
                         Double.parseDouble(cursor.getString(3)),    //amount
                         cursor.getString(4),                        //receipt
-                        Integer.parseInt(cursor.getString(5)),      //year
-                        Integer.parseInt(cursor.getString(6)),      //month
-                        Integer.parseInt(cursor.getString(7)),      //day
-                        null                                        //todo getcategories
+                        Long.parseLong(cursor.getString(5)),      //dateStamp
+                        fetchCategory(Integer.parseInt(cursor.getString(6)))
                 );
                 expenseList.add(expense);
             } while (cursor.moveToNext());
@@ -313,11 +318,9 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(KEY_CURRENCY, expense.getExCurrencyCode());
         values.put(KEY_AMOUNT, expense.getExAmount());
         values.put(KEY_RECEIPT, expense.getExReceipt());
-        values.put(KEY_EXYEAR, expense.getExYear());
-        values.put(KEY_EXMONTH, expense.getExMonth());
-        values.put(KEY_EXDAY, expense.getExDay());;
+        values.put(KEY_EXDATE, expense.getExDateStamp());
+        values.put(KEY_EXCAT, expense.getCategory().getId());
 
-        // updating row
         return db.update(TABLE_EXPENSES, values, KEY_ID + " = ?",
                 new String[]{String.valueOf(expense.getId())});
 
@@ -329,7 +332,6 @@ public class DBHelper extends SQLiteOpenHelper {
                 new String[]{String.valueOf(expense.getId())});
         db.close();
     }
-
 
 
 // ####################################################################### //

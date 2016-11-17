@@ -1,12 +1,8 @@
 package umbf16cs443.extrack.db.models;
 
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Currency;
 import java.util.Date;
-import java.util.List;
-import java.util.Set;
-
+//project specific imports
 import umbf16cs443.extrack.db.models.Category;
 
 public class Expense {
@@ -17,9 +13,10 @@ public class Expense {
     private String exCurrencyCode;
     private Double exAmount;
     private String exReceipt;
-    private int exYear;
-    private int exMonth;
-    private int exDay;
+    //    private int exYear;
+//    private int exMonth;
+//    private int exDay;
+    private long exDateStamp;
 
     // Object variables for usefulness
 
@@ -27,7 +24,7 @@ public class Expense {
 
     // Category array for mapping
 
-    private Set<Category> exCategories;
+    private Category exCategory;
 
 
     // Constructors
@@ -35,87 +32,27 @@ public class Expense {
 
     }
 
-    public Expense(String exVendor, Currency currency, Double
-            exAmount, String exReceipt, int exYear, int exMonth, int exDay,
-                   Category[] categories) {
-
-        this.exVendor = exVendor;
-        this.exCurrencyCode = currency.getCurrencyCode();
-        this.exAmount = exAmount;
-        this.exReceipt = exReceipt;
-        this.exYear = exYear;
-        this.exMonth = exMonth;
-        this.exDay = exDay;
-
-        //needs a date conversion method
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(exYear, exMonth, exDay);
-        exDate = calendar.getTime();
-
-        if (categories != null) {
-            for (int i = 0; i < categories.length; i++) {
-                this.exCategories.add(categories[i]);
-            }
-        }
-
-    }
-
-
     public Expense(int id, String exVendor, Currency currency, Double
-            exAmount, String exReceipt, int exYear, int exMonth, int exDay,
-                   Category[] categories) {
-
+            exAmount, String exReceipt, long exDateStamp,
+                   Category category) {
         this.id = id;
         this.exVendor = exVendor;
         this.exCurrencyCode = currency.getCurrencyCode();
         this.exAmount = exAmount;
         this.exReceipt = exReceipt;
-        this.exYear = exYear;
-        this.exMonth = exMonth;
-        this.exDay = exDay;
 
-        //needs a date conversion method
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(exYear, exMonth, exDay);
-        exDate = calendar.getTime();
+        this.exDateStamp = exDateStamp;
 
-        if (categories != null) {
-            for (int i = 0; i < categories.length; i++) {
-                this.exCategories.add(categories[i]);
-            }
-        }
+
+        this.exDate = new Date(exDateStamp);
+        this.exCategory = category;
+
 
     }
-
-    public Expense(int id, String exVendor, String currency, Double
-            exAmount, String exReceipt, int exYear, int exMonth, int exDay,
-                   Category[] categories) {
-
-        this.id = id;
-        this.exVendor = exVendor;
-        this.exCurrencyCode = currency;
-        this.exAmount = exAmount;
-        this.exReceipt = exReceipt;
-        this.exYear = exYear;
-        this.exMonth = exMonth;
-        this.exDay = exDay;
-
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(exYear, exMonth, exDay);
-        exDate = calendar.getTime();
-
-        if (categories != null) {
-            for (int i = 0; i < categories.length; i++) {
-                this.exCategories.add(categories[i]);
-            }
-        }
-
-    }
-
 
     public Expense(int id, String exVendor, Currency currency, Double
-            exAmount, String exReceipt, Date date, Category[] categories) {
+            exAmount, String exReceipt, Date date,
+                   Category category) {
 
         this.id = id;
         this.exVendor = exVendor;
@@ -125,85 +62,72 @@ public class Expense {
 
         this.exDate = date;
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
+        this.exDateStamp = exDate.getTime();
+        this.exCategory = category;
 
-        this.exYear = calendar.get(Calendar.YEAR);
-        this.exMonth = calendar.get(Calendar.MONTH);
-        this.exDay = calendar.get(Calendar.DAY_OF_MONTH);
 
-        if (categories != null) {
-            for (int i = 0; i < categories.length; i++) {
-                this.exCategories.add(categories[i]);
-            }
-        }
     }
 
     public Expense(int id, String exVendor, String currency, Double
-            exAmount, String exReceipt, Date date, Category[] categories) {
+            exAmount, String exReceipt, long exDateStamp,
+                   Category category) {
+        this.id = id;
+        this.exVendor = exVendor;
+        this.exCurrencyCode = currency;
+        this.exAmount = exAmount;
+        this.exReceipt = exReceipt;
+        this.exDateStamp = exDateStamp;
+
+        this.exDate = new Date(exDateStamp);
+        this.exCategory = category;
+
+
+    }
+
+    public Expense(int id, String exVendor, String currency, Double
+            exAmount, String exReceipt, Date date,
+                   Category category) {
 
         this.id = id;
         this.exVendor = exVendor;
         this.exCurrencyCode = currency;
         this.exAmount = exAmount;
         this.exReceipt = exReceipt;
-
         this.exDate = date;
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
+        this.exDateStamp = exDate.getTime();
+        this.exCategory = category;
 
-        this.exYear = calendar.get(Calendar.YEAR);
-        this.exMonth = calendar.get(Calendar.MONTH);
-        this.exDay = calendar.get(Calendar.DAY_OF_MONTH);
-
-        if (categories != null) {
-            for (int i = 0; i < categories.length; i++) {
-                this.exCategories.add(categories[i]);
-            }
-        }
     }
 
-    //needs a date based constructor
 
     // Helper Methods for converting Objects to primitives for database
 
-    public void addCategory(Category category) {
-        this.exCategories.add(category);
-    }
 
-    public void removeCategory(Category category) {
-        this.exCategories.remove(category);
+    public void clearCategory() {
+        this.exCategory = null;
 
     }
 
-    public void clearCategories() {
-        this.exCategories.clear();
-
+    public Category getCategory(){
+        return this.exCategory;
     }
 
-    public void setDate(Date date) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
+    public void setCategory(Category category){
+        this.exCategory = category;
+    }
 
-        this.exYear = calendar.get(Calendar.YEAR);
-        this.exMonth = calendar.get(Calendar.MONTH);
-        this.exDay = calendar.get(Calendar.DAY_OF_MONTH);
+
+    public void setExDate(Date date) {
 
         this.exDate = date;
-
+        this.exDateStamp = exDate.getTime();
 
     }
 
-    public void setDate(int exYear, int exMonth, int exDay) {
-        this.exYear = exYear;
-        this.exMonth = exMonth;
-        this.exDay = exDay;
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(exYear, exMonth, exDay);
-        this.exDate = calendar.getTime();
-
+    public void setExDate(long dateStamp) {
+        this.exDateStamp = dateStamp;
+        this.exDate = new Date(dateStamp);
 
     }
 
@@ -219,47 +143,33 @@ public class Expense {
         return currency;
     }
 
-    public int getExYear() {
-        return exYear;
+    public void setCurrencyCode(String currency) {
+        this.exCurrencyCode = currency;
+
     }
 
-    public void setExYear(int exYear) {
-        this.exYear = exYear;
+    public String getCurrencyCode() {
+
+        return this.exCurrencyCode;
     }
 
-    public int getExMonth() {
-        return exMonth;
-    }
-
-    public void setExMonth(int exMonth) {
-        this.exMonth = exMonth;
-    }
-
-    public int getExDay() {
-        return exDay;
-    }
-
-    public void setExDay(int exDay) {
-        this.exDay = exDay;
-    }
 
     public Date getExDate() {
         return exDate;
     }
 
-    public void setExDate(Date exDate) {
-        this.exDate = exDate;
+    public long getExDateStamp() {
+        return exDateStamp;
+
     }
 
-    public Set<Category> getExCategories() {
-        return exCategories;
+    public Category getExCategory() {
+        return exCategory;
     }
 
-    public void setExCategories(Set<Category> exCategories) {
-        this.exCategories = exCategories;
+    public void setExCategory(Category exCategory) {
+        this.exCategory = exCategory;
     }
-
-// Getters and Setters
 
     public int getId() {
         return id;
