@@ -37,11 +37,11 @@ public class AddCatActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
 
-        input = (EditText) this.findViewById(R.id.category);
-        Category category = new Category(input.getText().toString());
-        db = new DBHelper(this);
-        db.addCategory(category);
-        db.close();
+//        input = (EditText) this.findViewById(R.id.category);
+//        Category category = new Category(input.getText().toString());
+//        db = new DBHelper(this);
+//        db.addCategory(category);
+//        db.close();
 
         switch (item.getItemId()){
 

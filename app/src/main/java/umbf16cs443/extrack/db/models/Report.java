@@ -2,27 +2,29 @@ package umbf16cs443.extrack.db.models;
 
 import java.util.Date;
 import java.util.Calendar;
+import java.util.Set;
 
 public class Report {
 
+    //DB Variables
     int id;
-
     String reportName;
-
     int startYear;
     int startMonth;
     int startDay;
-
     int endYear;
     int endMonth;
     int endDay;
 
+    //add expense limit and other exense amounts
+
+    //Other Variables
     Date startDate;
     Date endDate;
+    //Expenses
+    Set<Expense> expenseSet;
 
-
-    public Report(){
-
+    public Report() {
 
     }
 
@@ -46,7 +48,8 @@ public class Report {
     }
 
     public Report(String reportName, int startYear, int startMonth,
-                  int startDay, int endYear, int endMonth, int endDay) {
+                  int startDay, int endYear, int endMonth, int endDay,
+                  Expense[] expenses) {
 
         this.reportName = reportName;
         this.startYear = startYear;
@@ -63,9 +66,16 @@ public class Report {
         calendar.set(endYear, endMonth, endDay);
         this.endDate = calendar.getTime();
 
+        if (expenses != null) {
+            for (int i = 0; i < expenses.length; i++) {
+                expenseSet.add(expenses[i]);
+
+            }
+        }
     }
 
-    public Report(String reportName, Date startDate, Date endDate) {
+    public Report(String reportName, Date startDate, Date endDate,
+                  Expense[] expenses) {
 
         this.reportName = reportName;
 
@@ -83,6 +93,13 @@ public class Report {
         this.endYear = calendar.get(Calendar.YEAR);
         this.endMonth = calendar.get(Calendar.MONTH);
         this.endDay = calendar.get(Calendar.DAY_OF_MONTH);
+
+        if (expenses != null) {
+            for (int i = 0; i < expenses.length; i++) {
+                expenseSet.add(expenses[i]);
+
+            }
+        }
 
 
     }
@@ -129,6 +146,12 @@ public class Report {
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
 
+    }
+
+    public void setStartDate(int year, int month, int day) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month, day);
+        this.startDate = calendar.getTime();
 
     }
 
@@ -139,4 +162,12 @@ public class Report {
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
+
+    public void setEndDate(int year, int month, int day) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month, day);
+        this.endDate = calendar.getTime();
+
+    }
+
 }
