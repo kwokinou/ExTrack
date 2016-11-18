@@ -23,14 +23,14 @@
         </Button>
 
         <Button
-            android:id="@+id/categorybt"
+            android:id="@+id/eventbt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/categories"
+            android:text="@string/events"
             android:textColor="#ffffff"
             android:background="@drawable/buttonshape"
-            android:onClick="viewCats">
+            android:onClick="viewEvents">
         </Button>
     </LinearLayout>
 

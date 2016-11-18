@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         btn1.setTextColor(Color.BLACK);
         btn1.setBackgroundResource(R.drawable.pressedbuttonshape);
 
-        Button btn2 = (Button) findViewById(R.id.categorybt);
+        Button btn2 = (Button) findViewById(R.id.eventbt);
         btn2.setTextColor(Color.WHITE);
         btn2.setBackgroundResource(R.drawable.buttonshape);
 
@@ -41,11 +41,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    //user clicked on Categories
-    public void viewCats(View view){
+    //user clicked on Events
+    public void viewEvents(View view){
 
         //update the two main buttons colors
-        Button btn = (Button) findViewById(R.id.categorybt);
+        Button btn = (Button) findViewById(R.id.eventbt);
         btn.setTextColor(Color.BLACK);
         btn.setBackgroundResource(R.drawable.pressedbuttonshape);
 
@@ -53,10 +53,10 @@ public class MainActivity extends AppCompatActivity {
         btn2.setTextColor(Color.WHITE);
         btn2.setBackgroundResource(R.drawable.buttonshape);
 
-        //replace the framelayout with the ViewCatFragment to show all categories
-        ViewCatFragment viewExpFrag = new ViewCatFragment();
+        //replace the framelayout with the ViewEventFragment to show all categories
+        ViewEventFragment viewEventFrag = new ViewEventFragment();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, viewExpFrag);
+        transaction.replace(R.id.fragment_container, viewEventFrag);
         transaction.commit();
     }
 }

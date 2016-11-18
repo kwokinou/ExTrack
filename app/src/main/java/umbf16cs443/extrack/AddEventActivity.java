@@ -9,13 +9,13 @@ import android.view.MenuItem;
  * Created by kwokin on 10/30/2016.
  */
 
-//activity to prompt user enter new category information
-public class AddCatActivity extends AppCompatActivity {
+//activity to prompt user enter new event information
+public class AddEventActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.add_a_category);
-        setTitle("Add a Category");
+        setContentView(R.layout.add_an_event);
+        setTitle("Add an Event");
     }
 
     //include save button in menu bar
@@ -28,8 +28,8 @@ public class AddCatActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
 
-            //user clicked on save to store Category object
-            //return to activity showing all Categories
+            //user clicked on save to store Event object
+            //return to activity showing all Events
             case R.id.save:
                 finish();
                 break;

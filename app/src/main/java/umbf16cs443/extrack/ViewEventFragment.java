@@ -14,14 +14,14 @@ import android.widget.ArrayAdapter;
 /**
  * Created by kwokin on 10/23/2016.
  */
-public class ViewCatFragment extends ListFragment {
+public class ViewEventFragment extends ListFragment {
 
-    //sample category list
-    String[] Categories = {
-            "Cat1",
-            "Cat2",
-            "Cat3",
-            "Cat4"
+    //sample event list
+    String[] Events = {
+            "Event1",
+            "Event2",
+            "Event3",
+            "Event4"
     };
 
 
@@ -34,8 +34,8 @@ public class ViewCatFragment extends ListFragment {
         int layout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
                 android.R.layout.simple_list_item_activated_1 : android.R.layout.simple_list_item_1;
 
-        //set up arry adapter to display categories
-        setListAdapter(new ArrayAdapter<String>(getActivity(), layout, Categories));
+        //set up array adapter to display events
+        setListAdapter(new ArrayAdapter<String>(getActivity(), layout, Events));
     }
 
     //action menu buttons
@@ -49,17 +49,17 @@ public class ViewCatFragment extends ListFragment {
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
 
-            //user clicked on add an expense action button
-            //switch to new activity to get user input for new category
+            //user clicked on add an event action button
+            //switch to new activity to get user input for new event
             case R.id.add:
-                Intent i = new Intent(getActivity(), AddCatActivity.class);
+                Intent i = new Intent(getActivity(), AddEventActivity.class);
                 startActivity(i);
                 break;
 
-            //user clicked on search an expense action button
-            //switch to new activity to get user input for search categories
+            //user clicked on search an event action button
+            //switch to new activity to get user input for search events
             case R.id.search:
-                Intent j = new Intent(getActivity(), SearchCatActivity.class);
+                Intent j = new Intent(getActivity(), SearchEventActivity.class);
                 startActivity(j);
                 break;
 

@@ -16,9 +16,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".AddExpActivity"/>
-        <activity android:name=".AddCatActivity"/>
+        <activity android:name=".AddEventActivity"/>
         <activity android:name=".SearchExpActivity"/>
-        <activity android:name=".SearchCatActivity"/>
+        <activity android:name=".SearchEventActivity"/>
     </application>
 
 </manifest>
