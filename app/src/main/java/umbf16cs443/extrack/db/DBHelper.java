@@ -92,7 +92,7 @@ public class DBHelper extends SQLiteOpenHelper {
             //           KEY_EXMONTH + " INTEGER" +
             //           KEY_EXDAY + " INTEGER" +
             KEY_EXDATE + " INTEGER" +
-            KEY_EXDATE + " INTEGER FOREIGN KEY" +
+            KEY_EXCAT  + " INTEGER" +
             KEY_CREATED_AT + " DATETIME" + ")";
 
     //todo report table
@@ -124,7 +124,6 @@ public class DBHelper extends SQLiteOpenHelper {
         // create new tables
         onCreate(db);
     }
-
 
 // ####################################################################### //
 // Category Helper Method
@@ -159,9 +158,9 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     // list all Categories
-    public List<Category> getAllCategories() {
+    public ArrayList<Category> getAllCategories() {
 
-        List<Category> categoryList = new ArrayList<Category>();
+        ArrayList<Category> categoryList = new ArrayList<Category>();
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_CATEGORIES;
 
@@ -234,6 +233,12 @@ public class DBHelper extends SQLiteOpenHelper {
 //        values.put(KEY_EXYEAR, expense.getExYear());
 //        values.put(KEY_EXMONTH, expense.getExMonth());
 //        values.put(KEY_EXDAY, expense.getExDay());
+        values.put(KEY_EXDATE, expense.getExDateStamp());
+
+
+        if(expense.getCategory() != null) {
+            values.put(KEY_EXCAT, expense.getCategory().getId());
+        }
 
         db.insert(TABLE_EXPENSES, null, values);
         db.close();
@@ -257,6 +262,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 Double.parseDouble(cursor.getString(3)),    //amount
                 cursor.getString(4),                        //receipt
                 Long.parseLong(cursor.getString(5)),      //dateStamp
+
                 null                                        //todo getcategories
 
 
@@ -265,9 +271,9 @@ public class DBHelper extends SQLiteOpenHelper {
         return expense;
     }
 
-    public List<Expense> getAllExpenses() {
+    public ArrayList<Expense> getAllExpenses() {
 
-        List<Expense> expenseList = new ArrayList<Expense>();
+        ArrayList<Expense> expenseList = new ArrayList<Expense>();
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_EXPENSES;
 
@@ -284,7 +290,8 @@ public class DBHelper extends SQLiteOpenHelper {
                         Double.parseDouble(cursor.getString(3)),    //amount
                         cursor.getString(4),                        //receipt
                         Long.parseLong(cursor.getString(5)),      //dateStamp
-                        fetchCategory(Integer.parseInt(cursor.getString(6)))
+           //             fetchCategory(Integer.parseInt(cursor.getString(6)))
+                        null //TODO FIX CATEGORIES
                 );
                 expenseList.add(expense);
             } while (cursor.moveToNext());

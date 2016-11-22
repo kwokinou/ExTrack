@@ -37,7 +37,11 @@ public class Expense {
                    Category category) {
         this.id = id;
         this.exVendor = exVendor;
-        this.exCurrencyCode = currency.getCurrencyCode();
+
+        if(currency != null) {
+            this.exCurrencyCode = currency.getCurrencyCode();
+        }
+
         this.exAmount = exAmount;
         this.exReceipt = exReceipt;
 
@@ -50,13 +54,61 @@ public class Expense {
 
     }
 
+    public Expense(String exVendor, Currency currency, Double
+            exAmount, String exReceipt, long exDateStamp,
+                   Category category) {
+
+        this.exVendor = exVendor;
+        if(currency != null) {
+            this.exCurrencyCode = currency.getCurrencyCode();
+        }
+        this.exAmount = exAmount;
+        this.exReceipt = exReceipt;
+
+        this.exDateStamp = exDateStamp;
+
+
+        this.exDate = new Date(exDateStamp);
+        this.exCategory = category;
+
+
+    }
+
+
+
+
+    public Expense(String exVendor, Currency currency, Double
+            exAmount, String exReceipt, Date date,
+                   Category category) {
+
+
+        this.exVendor = exVendor;
+
+        if(currency != null) {
+            this.exCurrencyCode = currency.getCurrencyCode();
+        }
+        this.exAmount = exAmount;
+        this.exReceipt = exReceipt;
+
+        this.exDate = date;
+
+        this.exDateStamp = exDate.getTime();
+        this.exCategory = category;
+
+
+    }
+
     public Expense(int id, String exVendor, Currency currency, Double
             exAmount, String exReceipt, Date date,
                    Category category) {
 
         this.id = id;
         this.exVendor = exVendor;
-        this.exCurrencyCode = currency.getCurrencyCode();
+
+        if(currency != null) {
+            this.exCurrencyCode = currency.getCurrencyCode();
+        }
+
         this.exAmount = exAmount;
         this.exReceipt = exReceipt;
 
@@ -78,7 +130,6 @@ public class Expense {
         this.exReceipt = exReceipt;
         this.exDateStamp = exDateStamp;
 
-        this.exDate = new Date(exDateStamp);
         this.exCategory = category;
 
 
@@ -95,7 +146,10 @@ public class Expense {
         this.exReceipt = exReceipt;
         this.exDate = date;
 
-        this.exDateStamp = exDate.getTime();
+        if(date != null){
+            this.exDateStamp = exDate.getTime();
+        }
+
         this.exCategory = category;
 
     }
@@ -215,6 +269,11 @@ public class Expense {
         this.exReceipt = null;
     }
 
+    public String toString(){
+        return this.exVendor + "   $" + exAmount.toString();
+
+
+    }
 
 }
 
