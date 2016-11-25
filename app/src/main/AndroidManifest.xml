@@ -19,6 +19,8 @@
         <activity android:name=".AddEventActivity"/>
         <activity android:name=".SearchExpActivity"/>
         <activity android:name=".SearchEventActivity"/>
+        <activity android:name=".EditExpActivity"/>
+        <activity android:name=".EditEventActivity"/>
     </application>
 
 </manifest>

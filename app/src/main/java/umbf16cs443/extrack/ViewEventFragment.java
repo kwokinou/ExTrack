@@ -1,5 +1,6 @@
 package umbf16cs443.extrack;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -8,13 +9,17 @@ import android.support.v4.app.ListFragment;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 
 /**
- * Created by kwokin on 10/23/2016.
+ * Created by kwokin on 11/24/2016.
  */
 public class ViewEventFragment extends ListFragment {
+
+    OnEventSelectedListener mCallback;
 
     //sample event list
     String[] Events = {
@@ -23,7 +28,6 @@ public class ViewEventFragment extends ListFragment {
             "Event3",
             "Event4"
     };
-
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -69,4 +73,31 @@ public class ViewEventFragment extends ListFragment {
         return true;
     }
 
+//*****************************Edit an Event by selecting it in the ListView*********************
+    //enables mainactivity to update when user selects an Event fromm Event listView
+    //when users selects an Event, display new activity for user to edit that Event's information
+    public interface OnEventSelectedListener{
+        public void onEventSelected(int position);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception.
+        try {
+            mCallback = (OnEventSelectedListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnEventSelectedListener");
+        }
+    }
+
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        // Notify the parent activity of selected item
+        mCallback.onEventSelected(position);
+    }
+//***************end of edit Event**************************************************************
 }
