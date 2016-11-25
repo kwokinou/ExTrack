@@ -1,7 +1,10 @@
 package umbf16cs443.extrack;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
+import android.icu.util.Currency;
+import android.icu.util.ULocale;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -13,19 +16,23 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.util.ArrayList;
+import java.util.Date;
+
+import umbf16cs443.extrack.db.DBHelper;
+import umbf16cs443.extrack.db.models.Expense;
+
 
 /**
  * Created by kwokin on 11/24/2016.
  */
+@android.support.annotation.RequiresApi(api = Build.VERSION_CODES.N)
 public class ViewExpFragment extends ListFragment {
     OnExpSelectedListener mCallback;
 
-    //sample expense list
-    String[] Expenses = {
-            "Exp1",
-            "Exp2",
-            "Exp3"
-    };
+    Date currentDate = new Date();
+
+    ArrayList<Expense> expenses;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -36,8 +43,12 @@ public class ViewExpFragment extends ListFragment {
         int layout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
                 android.R.layout.simple_list_item_activated_1 : android.R.layout.simple_list_item_1;
 
+        DBHelper db = new DBHelper(getContext());
+        expenses = db.getAllExpenses();
+
         //array adapter to show all expenses
-        setListAdapter(new ArrayAdapter<String>(getActivity(), layout, Expenses));
+        setListAdapter(new ArrayAdapter<Expense>(getActivity(), layout,
+                expenses));
     }
 
     //action menu buttons
