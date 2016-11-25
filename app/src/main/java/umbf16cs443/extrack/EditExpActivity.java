@@ -22,8 +22,13 @@ import android.widget.Toast;
 import org.w3c.dom.Text;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
+
+import umbf16cs443.extrack.db.DBHelper;
+import umbf16cs443.extrack.db.models.Expense;
 
 /**
  * Created by kwokin on 11/24/2016.
@@ -31,6 +36,8 @@ import java.util.GregorianCalendar;
 public class EditExpActivity extends AppCompatActivity {
     Spinner spinner;//select category
     ArrayAdapter<CharSequence> adapter; //adapter for spinner
+
+    ArrayList<Expense> expenses;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +48,17 @@ public class EditExpActivity extends AppCompatActivity {
         int position = mIntent.getIntExtra("position", 0);
         //EDIT NEEDED: need to display vendor, currency type, amount, and receipt img based on
         //the given position selected by user
+
+        DBHelper db = new DBHelper(this);
+        expenses = db.getAllExpenses();
+
+        Expense exp = expenses.get(position);
+
+        ((EditText) findViewById(R.id.vendor2)).setText(exp.getExVendor());
+
+        ((EditText) findViewById(R.id.amount2)).setText(exp.getExAmount().toString());
+
+
 
         //set up spinner for category selection.
         //EDIT NEEDED: spinner should show the previously selected Category
