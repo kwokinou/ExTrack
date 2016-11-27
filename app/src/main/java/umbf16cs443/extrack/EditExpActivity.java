@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import umbf16cs443.extrack.db.DBHelper;
+import umbf16cs443.extrack.db.models.Category;
 import umbf16cs443.extrack.db.models.Expense;
 
 /**
@@ -35,9 +36,14 @@ import umbf16cs443.extrack.db.models.Expense;
  */
 public class EditExpActivity extends AppCompatActivity {
     Spinner spinner;//select category
-    ArrayAdapter<CharSequence> adapter; //adapter for spinner
+    ArrayAdapter<Category> adapter; //adapter for spinner
+    ArrayList<Category> catArray;
 
     ArrayList<Expense> expenses;
+    DBHelper db;
+    Expense exp; //used to retrieve the expense selected by user
+    int position; //used to retrieve the position of the expense selected by user
+    //Category prevCat, curCat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,32 +51,34 @@ public class EditExpActivity extends AppCompatActivity {
         setContentView(R.layout.edit_an_exp);
         setTitle("Edit an Expense");
         Intent mIntent = getIntent();
-        int position = mIntent.getIntExtra("position", 0);
-        //EDIT NEEDED: need to display vendor, currency type, amount, and receipt img based on
-        //the given position selected by user
+        position = mIntent.getIntExtra("position", 0); //retrieve selected position
 
-        DBHelper db = new DBHelper(this);
+        //TODO need to display currency, and receipt img based on the given position selected by user
+        db = new DBHelper(this);
         expenses = db.getAllExpenses();
+        catArray = db.getAllCategories();
 
-        Expense exp = expenses.get(position);
+        exp = expenses.get(position);
+      //  prevCat = exp.getCategory();
 
-        ((EditText) findViewById(R.id.vendor2)).setText(exp.getExVendor());
+        ((EditText) findViewById(R.id.vendor2)).setText(exp.getExVendor());//display saved vendor name
 
-        ((EditText) findViewById(R.id.amount2)).setText(exp.getExAmount().toString());
-
-
+        ((EditText) findViewById(R.id.amount2)).setText(exp.getExAmount().toString());//display saved amount
 
         //set up spinner for category selection.
-        //EDIT NEEDED: spinner should show the previously selected Category
+        //TODO need to display saved category in spinner
         spinner = (Spinner) findViewById(R.id.spinner2);
-        //category_names is defined in strings xml as an example to populate spinner adapter
-        adapter = ArrayAdapter.createFromResource(this, R.array.category_names, android.R.layout.simple_spinner_item);
+
+        adapter = new ArrayAdapter<Category>(this, android.R.layout
+                .simple_spinner_item,
+                catArray);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
+       // spinner.setSelection(exp.getCategory().getId());
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id){
-                Toast.makeText(getBaseContext(),parent.getItemAtPosition(position)+" selected", Toast.LENGTH_LONG).show();
+              //  Toast.makeText(getBaseContext(),parent.getItemAtPosition(position)+" selected", Toast.LENGTH_LONG).show();
             }
 
             @Override
@@ -91,6 +99,10 @@ public class EditExpActivity extends AppCompatActivity {
             //user clicked on save to store updated Expense object
             //return to activity showing all Expenses
             case R.id.save:
+                EditText vendor = (EditText) findViewById(R.id.vendor2);
+                EditText amount = (EditText) findViewById(R.id.amount2);
+
+                //TODO update selected expense with entered data
                 finish();
                 break;
 
@@ -104,7 +116,7 @@ public class EditExpActivity extends AppCompatActivity {
                 deleteDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //EDIT NEEDED: code for delete expense
+                        db.deleteExpense(exp);//delete Expense from database
                         finish();
                     }
                 });
@@ -125,9 +137,7 @@ public class EditExpActivity extends AppCompatActivity {
     //user clicked on add category to create a new category*******************************
     public void addCategory(View view){
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
-        //EDIT NEEDED: this should pull from the selected Exp's Category based on the provided position
-       final EditText edittext = new EditText(EditExpActivity.this);
+        final EditText edittext = new EditText(EditExpActivity.this);
 
         alert.setMessage("Enter Category Name");
         alert.setTitle("Add Category");

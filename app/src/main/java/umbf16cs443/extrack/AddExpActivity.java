@@ -47,6 +47,7 @@ public class AddExpActivity extends AppCompatActivity
     // TODO RECEIPT
     EditText amount;
     Date date;
+    Category category;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +62,7 @@ public class AddExpActivity extends AppCompatActivity
 
         //set up spinner for category selection
         spinner = (Spinner) findViewById(R.id.spinner);
-        //category_names is defined in strings xml as an example to populate spinner adapter
+
         adapter = new ArrayAdapter<Category>(this, android.R.layout
                 .simple_spinner_item,
                 catArray);
@@ -70,13 +71,13 @@ public class AddExpActivity extends AppCompatActivity
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id){
-                Toast.makeText(getBaseContext(),parent.getItemAtPosition(position)+" selected", Toast.LENGTH_LONG).show();
+              //  Toast.makeText(getBaseContext(),parent.getItemAtPosition(position)+" selected", Toast.LENGTH_LONG).show();
+               // category = (Category) parent.getItemAtPosition(position);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent){}
         });
-
     }
 
     //include save button in menu bar
@@ -92,15 +93,18 @@ public class AddExpActivity extends AppCompatActivity
             //user clicked on save to store Expense object
             //return to activity showing all Expenses
             case R.id.save:
+                    vendor = (EditText) findViewById(R.id.vendor);
+                    String finalVendor = vendor.getText().toString();
+                    //TODO GRAB CURRENCY
+                    amount = (EditText) findViewById(R.id.amount);
+                    //TODO receipt
+                    //TODO getCategory
 
-                vendor = (EditText) findViewById(R.id.vendor);
-                String finalVendor = vendor.getText().toString();
-                //TODO GRAB CURRENCY
-                amount = (EditText) findViewById(R.id.amount);
-                //TODO receipt
-                //TODO getCategory
+                //Only create Expense obj if at least vendor and amount provided
+                if(!vendor.getText().toString().equals("") &&
+                        !amount.getText().toString().equals("")){
 
-                Expense expense = new Expense(
+                    Expense expense = new Expense(
                         vendor.getText().toString(),        //vendor
                         null,                               //currency
                         Double.parseDouble(amount.getText().toString()), //amount
@@ -108,9 +112,11 @@ public class AddExpActivity extends AppCompatActivity
                         date, // date
                         null); //category
 
-                DBHelper db = new DBHelper(getApplicationContext());
-                db. addExpense(expense);
-
+                    DBHelper db = new DBHelper(getApplicationContext());
+                    db.addExpense(expense);
+                }
+                else
+                    Toast.makeText(getBaseContext(),"Required Fields: Vendor, Amount", Toast.LENGTH_SHORT).show();
                 finish();
                 break;
 
@@ -140,8 +146,6 @@ public class AddExpActivity extends AppCompatActivity
                     db.addCategory(newCat);
 
                     adapter.add(newCat);
-
-
                     adapter.notifyDataSetChanged();
                 }
 
@@ -154,11 +158,6 @@ public class AddExpActivity extends AppCompatActivity
             }
         });
         alert.show();
-
-
-
-
-
 
     }
 //end of addCategory**************************************************************************
@@ -176,9 +175,11 @@ public class AddExpActivity extends AppCompatActivity
     }
 
     public void onDateSet(DatePicker view, int year, int month, int day) {
-        Calendar cal = Calendar.getInstance();
-        cal.set(year, month, day);
-        date = cal.getTime();
+        //Calendar cal = Calendar.getInstance();
+        Calendar cal = new GregorianCalendar(year, month, day);
+        setDate(cal);
+        //cal.set(year, month, day);
+        //date = cal.getTime();
     }
 
     public static class DatePickerFragment extends DialogFragment {

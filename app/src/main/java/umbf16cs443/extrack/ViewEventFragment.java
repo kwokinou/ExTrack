@@ -67,6 +67,11 @@ public class ViewEventFragment extends ListFragment {
                 startActivity(j);
                 break;
 
+            case R.id.setting:
+                Intent k = new Intent(getActivity(), SettingActivity.class);
+                startActivity(k);
+                break;
+
             default:
                 return super.onOptionsItemSelected(item);
         }

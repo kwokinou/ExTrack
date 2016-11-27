@@ -31,8 +31,10 @@ public class ViewExpFragment extends ListFragment {
     OnExpSelectedListener mCallback;
 
     Date currentDate = new Date();
-
+    DBHelper db;
+    int layout;
     ArrayList<Expense> expenses;
+    ArrayAdapter<Expense> exAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -40,15 +42,14 @@ public class ViewExpFragment extends ListFragment {
         setHasOptionsMenu(true); //show action bar buttons
 
         //set up list layout
-        int layout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
+        layout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
                 android.R.layout.simple_list_item_activated_1 : android.R.layout.simple_list_item_1;
 
-        DBHelper db = new DBHelper(getContext());
+        db = new DBHelper(getContext());
         expenses = db.getAllExpenses();
 
-        //array adapter to show all expenses
-        setListAdapter(new ArrayAdapter<Expense>(getActivity(), layout,
-                expenses));
+        exAdapter = new ArrayAdapter<Expense>(getActivity(), layout, expenses);
+        setListAdapter(exAdapter);
     }
 
     //action menu buttons
@@ -75,10 +76,23 @@ public class ViewExpFragment extends ListFragment {
                 startActivity(j);
                 break;
 
+            case R.id.setting:
+                Intent k = new Intent(getActivity(), SettingActivity.class);
+                startActivity(k);
+                break;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
         return true;
+    }
+
+    //update Expense ListView
+    public void updateExpListView(){
+
+        expenses = db.getAllExpenses();
+        exAdapter = new ArrayAdapter<Expense>(getActivity(), layout, expenses);
+        setListAdapter(exAdapter);
     }
 
 //*****************************Edit an Expense by selecting it in the ListView******************
