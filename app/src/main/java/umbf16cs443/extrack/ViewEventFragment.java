@@ -40,8 +40,6 @@ public class ViewEventFragment extends ListFragment {
         //set up array adapter to display events
         setListAdapter(new ArrayAdapter<Event>(getActivity(), layout, events));
 
-
-
     }
 
     //action menu buttons

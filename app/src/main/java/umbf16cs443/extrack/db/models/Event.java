@@ -12,6 +12,8 @@ public class Event {
     private Date startDate;
     private Date endDate;
 
+    // todo add expense total and expense total method
+
     public Event() {
 
     }
@@ -132,8 +134,8 @@ public class Event {
         this.expenses = expenses;
     }
 
-    public void addExpense(Expense expense){
-        if(expenses == null){
+    public void addExpense(Expense expense) {
+        if (expenses == null) {
             expenses = new ArrayList<Expense>();
         }
 
@@ -141,8 +143,8 @@ public class Event {
     }
 
     // by index
-    public void deleteExpense(int index){
-        if(expenses != null){
+    public void deleteExpense(int index) {
+        if (expenses != null) {
             expenses.remove(index);
 
         }
@@ -150,13 +152,13 @@ public class Event {
     }
 
     // by comparision
-    public void deleteExpense(Expense expense){
+    public void deleteExpense(Expense expense) {
         Expense tempExpense;
 
-        if(expenses != null) {
+        if (expenses != null) {
             for (int i = 0; i < expenses.size(); i++) {
                 tempExpense = expenses.get(i);
-                if(tempExpense.equals(expense)){
+                if (tempExpense.equals(expense)) {
                     expenses.remove(i);
                     return;
                 }
@@ -171,14 +173,12 @@ public class Event {
     // **********************************************************************
 
 
-    public String toString(){
-        if(this.limit > 0) {
-            return this.eventName + ": " + "start: " + "end: " + "limit:" + this
-                    .limit;
+    public String toString() {
+        if (this.expenses == null || this.expenses.size() == 0) {
+            return this.eventName + " : 0";
         }
-        return this.eventName + ": " + "start: " + "end: " + "limit: none";
+        return this.eventName + " : " + expenses.size();
 
     }
-
 
 }

@@ -28,14 +28,14 @@ import java.util.List;
 
 public class DBHelper extends SQLiteOpenHelper {
     // Database Version
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 8;
     // Database Name
     private static final String DATABASE_NAME = "exTrackDB";
     // Table Names
     private static final String TABLE_EXPENSES = "expenses";
     private static final String TABLE_CATEGORIES = "categories";
-
     private static final String TABLE_EVENTS = "events";
+    private static final String TABLE_EVENTS_TO_EXPENSES = "events_to_expenses";
 
     // Common column names
     private static final String KEY_ID = "id";
@@ -60,7 +60,8 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String KEY_EVENT_END_DATE = "event_end_date";
 
     // EVENT TO EXPENSE - mapping table column names
-
+    private static final String KEY_EVENT_ID = "event_pk";
+    private static final String KEY_EXPENSE_ID = "expense_fk";
     // Coming Soon
 
 
@@ -101,6 +102,12 @@ public class DBHelper extends SQLiteOpenHelper {
             KEY_EVENT_END_DATE + " INTEGER," +
             KEY_CREATED_AT + " DATETIME" + ")";
 
+    private static final String CREATE_TABLE_EVENTS_TO_EXPENSES = "CREATE TABLE " +
+            TABLE_EVENTS_TO_EXPENSES + "(" +
+            KEY_ID + " INTEGER PRIMARY KEY," +
+            KEY_EVENT_ID + " INTEGER," +
+            KEY_EXPENSE_ID + " INTEGER," +
+            KEY_CREATED_AT + " DATETIME" + ")";
 
     //todo relational table for events and expenses
 
@@ -112,7 +119,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_CATEGORIES);
         db.execSQL(CREATE_TABLE_EXPENSES);
         db.execSQL(CREATE_TABLE_EVENTS);
-//        db.execSQL(CREATE_TABLE_EVENTS_TO_EXPENSES);
+        db.execSQL(CREATE_TABLE_EVENTS_TO_EXPENSES);
 
 
 // todo implement relation tables
@@ -127,6 +134,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_EXPENSES);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CATEGORIES);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENTS_TO_EXPENSES);
 
         // create new tables
         onCreate(db);
@@ -393,9 +401,22 @@ public class DBHelper extends SQLiteOpenHelper {
 
         }
 
-        // todo map events to expenses
+        long eventID = db.insert(TABLE_EVENTS, null, values);
 
-        db.insert(TABLE_EVENTS, null, values);
+
+        // todo map events to expenses
+//        ContentValues exvalues = new ContentValues();
+//
+//        ArrayList<Expense> eventExpenses = event.getExpenses();
+//        if(eventExpenses != null || eventExpenses.size() > 0){
+//            for(Expense e : eventExpenses){
+//                exvalues.put(KEY_EVENT_ID, eventID);
+//                exvalues.put(KEY_EXPENSE_ID, e.getId());
+//            }
+//        }
+//
+//        db.insert(TABLE_EVENTS_TO_EXPENSES, null, exvalues);
+
         // todo add events to mapping database
         db.close();
 
@@ -419,9 +440,14 @@ public class DBHelper extends SQLiteOpenHelper {
                 Long.parseLong(cursor.getString(4))      // end date
         );
 
+        ArrayList<Expense> eventExpenses = new ArrayList<Expense>();
+
         //todo move cursor to mapping table
 
         //todo add relevent expenses
+
+        event.setExpenses(eventExpenses);
+
 
         return event;
     }
@@ -451,10 +477,11 @@ public class DBHelper extends SQLiteOpenHelper {
                 //todo move cursor to mapping table
 
                 //todo add relevent expenses
-
+                eventList.add(event);
 
             } while (cursor.moveToNext());
         }
+
 
         return eventList;
 
