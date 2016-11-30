@@ -13,9 +13,7 @@ public class Expense {
     private String exCurrencyCode;
     private Double exAmount;
     private String exReceipt;
-    //    private int exYear;
-//    private int exMonth;
-//    private int exDay;
+
     private long exDateStamp;
 
     // Object variables for usefulness
@@ -270,8 +268,14 @@ public class Expense {
     }
 
     public String toString(){
-        return this.exVendor + "   $" + exAmount.toString();
 
+        if(!(exCategory == null)){
+            return "$" + exAmount.toString() + "  -  " + this.exVendor + " - " +
+                    exCategory.toString();
+        }
+
+        return "$" + exAmount.toString() + "  -  " + this.exVendor + " - " +
+                "none";
 
     }
 

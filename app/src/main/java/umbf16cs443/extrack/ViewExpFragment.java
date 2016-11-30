@@ -32,7 +32,7 @@ public class ViewExpFragment extends ListFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState){
-       super.onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState);
         setHasOptionsMenu(true); //show action bar buttons
 
         //set up list layout
