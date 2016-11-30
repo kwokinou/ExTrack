@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical" android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:weightSum="1">
+
+    <EditText
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/vendor"
+        android:hint="@string/vendor_name" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_below="@id/vendor"
+        android:id="@+id/transDate" />
+
+    <Button
+        android:id="@+id/picDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/select_date"
+        android:onClick="pickDate"
+        android:layout_below="@+id/vendor"
+        android:layout_centerHorizontal="true" />
+
+    <EditText
+        android:layout_width="188dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/currency"
+        android:layout_below="@id/picDate"
+        android:hint="@string/currency" />
+
+    <EditText
+        android:layout_width="188dp"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:ems="10"
+        android:id="@+id/amount"
+        android:layout_below="@id/currency"
+        android:hint="@string/amount" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/spinner_view"
+        android:text="@string/select_category"
+        android:layout_above="@+id/spinner"
+        android:layout_alignParentStart="true" />
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="188dp"
+        android:layout_height="40dp"
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/attReceipt"
+        android:layout_alignEnd="@+id/currency" />
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/attach_receipt"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="0"
+        android:id="@+id/attReceipt"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Category"
+        android:id="@+id/add_category"
+        android:layout_marginStart="31dp"
+        android:layout_below="@+id/spinner_view"
+        android:layout_toEndOf="@+id/spinner"
+        android:onClick="addCategory"/>
+
+</RelativeLayout>

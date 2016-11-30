@@ -21,8 +21,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Currency;
+import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Set;
+
+import umbf16cs443.extrack.db.DBHelper;
+import umbf16cs443.extrack.db.models.Category;
+import umbf16cs443.extrack.db.models.Expense;
 
 /**
  * Created by kwokin on 10/30/2016.
@@ -30,11 +39,27 @@ import java.util.GregorianCalendar;
 
 //activity to prompt user enter new expense information
 public class AddExpActivity extends AppCompatActivity
-            implements DatePickerDialog.OnDateSetListener {
+        implements DatePickerDialog.OnDateSetListener {
 
-    Spinner spinner;//select category
-    ArrayAdapter<CharSequence> adapter; //adapter for spinner
 
+    ArrayAdapter<Category> adapter; // adapter for spinner
+    ArrayList<Category> catArray;   // categories array
+
+    // New Expense Variables
+    Currency exCurrency;
+    // threw this up here due to scope issues
+    Currency tempCurrency;
+
+    Date exDate;
+    String receiptString = null;
+
+    // View Components for New Expense
+    EditText vendor;                    // the vendor input
+    EditText amount;                    // the ammount input
+    TextView currencyText;              // displays currency code
+    TextView dateText;                  // displays date selected
+    Spinner catSpinner;                 // select category
+    Category exCat;                     // expense category
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,20 +67,49 @@ public class AddExpActivity extends AppCompatActivity
         setContentView(R.layout.add_an_exp);
         setTitle("Add an Expense");
 
+        DBHelper db = new DBHelper(getApplicationContext());
+        catArray = db.getAllCategories();
+        Calendar calendar = Calendar.getInstance();
+
+
+        // Set New Expense Variables To Defaults
+        exDate = calendar.getTime();
+        exCurrency = Currency.getInstance("USD");
+
+        // Identify views
+        vendor = (EditText) findViewById(R.id.vendor);
+        amount = (EditText) findViewById(R.id.amount);
+        currencyText = (TextView) findViewById(R.id.currency_text);
+        dateText = (TextView) findViewById(R.id.date_text);
+
+
+        // Set Currency Text
+        currencyText.setText(exCurrency.toString());
+        // Date Formatter Variable
+        SimpleDateFormat simpleDate = new SimpleDateFormat("MM/dd/yyyy");
+        dateText.setText(simpleDate.format(exDate));
+
         //set up spinner for category selection
-        spinner = (Spinner) findViewById(R.id.spinner);
+        catSpinner = (Spinner) findViewById(R.id.spinner);
         //category_names is defined in strings xml as an example to populate spinner adapter
-        adapter = ArrayAdapter.createFromResource(this, R.array.category_names, android.R.layout.simple_spinner_item);
+        adapter = new ArrayAdapter<Category>(this, android.R.layout
+                .simple_spinner_item,
+                catArray);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+        catSpinner.setAdapter(adapter);
+        catSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id){
-                Toast.makeText(getBaseContext(),parent.getItemAtPosition(position)+" selected", Toast.LENGTH_LONG).show();
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                exCat = (Category) parent.getItemAtPosition(position);
+
+                Toast.makeText(getBaseContext(), parent.getItemAtPosition
+                        (position) + " selected", Toast.LENGTH_SHORT).show();
+
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent){}
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
         });
 
     }
@@ -73,6 +127,38 @@ public class AddExpActivity extends AppCompatActivity
             //user clicked on save to store Expense object
             //return to activity showing all Expenses
             case R.id.save:
+
+                if(vendor.getText().toString().equals("")){
+
+
+                    Toast.makeText(getApplicationContext(),R.string
+                            .blank_vendor_error , Toast.LENGTH_SHORT ).show();
+                    return false;
+
+                }
+
+                if(amount.getText().toString().equals("")){
+                    Toast.makeText(getApplicationContext(),R.string
+                            .blank_amount_error , Toast.LENGTH_SHORT ).show();
+                    return false;
+
+                }
+
+                String finalVendor = vendor.getText().toString();
+
+
+
+                Expense expense = new Expense(
+                        vendor.getText().toString(),        //vendor
+                        exCurrency,                               //currency
+                        Double.parseDouble(amount.getText().toString()), //amount
+                        receiptString, //receipt
+                        exDate, // date
+                        exCat); //category
+
+                DBHelper db = new DBHelper(getApplicationContext());
+                db.addExpense(expense);
+
                 finish();
                 break;
 
@@ -83,8 +169,8 @@ public class AddExpActivity extends AppCompatActivity
     }
 
 
-//user clicked on add category to create a new category*******************************
-    public void addCategory(View view){
+    //user clicked on add category to create a new category*******************************
+    public void addCategory(View view) {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         final EditText edittext = new EditText(AddExpActivity.this);
 
@@ -96,6 +182,23 @@ public class AddExpActivity extends AppCompatActivity
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String YouEditTextValue = edittext.getText().toString();
+                if (YouEditTextValue.length() > 0) {
+                    DBHelper db = new DBHelper(getApplicationContext());
+                    Category newCat = new Category(YouEditTextValue);
+
+                    db.addCategory(newCat);
+
+                    catArray = db.getAllCategories();
+
+                    adapter = new ArrayAdapter<Category>(getApplicationContext(), android.R.layout
+                            .simple_spinner_item,
+                            catArray);
+                    adapter.setDropDownViewResource(android.R.layout
+                            .simple_spinner_dropdown_item);
+                    catSpinner.setAdapter(adapter);
+
+                }
+
             }
         });
 
@@ -105,11 +208,80 @@ public class AddExpActivity extends AppCompatActivity
             }
         });
         alert.show();
+
+
     }
 //end of addCategory**************************************************************************
 
+    // add currency
 
-//code for setting up DatePicker**************************************************************
+    public void setCurrency(View view) {
+
+        tempCurrency = exCurrency;
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        final Spinner currencySpinner = new Spinner(AddExpActivity.this);
+
+        alert.setMessage("Select the currency that corresponds to this " +
+                "expense.");
+        alert.setTitle("Select Currency");
+
+        Set<Currency> allCurrencies = Currency.getAvailableCurrencies();
+        Currency[] currencies = allCurrencies.toArray(new
+                Currency[allCurrencies.size()]);
+
+
+        ArrayAdapter<Currency> currencyAdapter = new ArrayAdapter<Currency>
+                (getApplicationContext(), android.R.layout
+                        .simple_spinner_item, currencies);
+
+
+        currencyAdapter.setDropDownViewResource(android.R.layout
+                .simple_spinner_dropdown_item);
+        currencyAdapter.setDropDownViewResource(android.R.layout
+                .simple_spinner_dropdown_item);
+        currencySpinner.setAdapter(currencyAdapter);
+
+        alert.setView(currencySpinner);
+
+        currencySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                tempCurrency = (Currency) parent.getItemAtPosition(position);
+
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+
+
+
+        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                exCurrency = tempCurrency;
+                currencyText.setText(exCurrency.toString());
+
+
+            }
+        });
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        alert.show();
+
+
+    }
+
+
+    //code for setting up DatePicker**************************************************************
     public void pickDate(View view) {
         DatePickerFragment dateFrag = new DatePickerFragment();
         dateFrag.show(getSupportFragmentManager(), "date");
@@ -121,8 +293,16 @@ public class AddExpActivity extends AppCompatActivity
     }
 
     public void onDateSet(DatePicker view, int year, int month, int day) {
-        Calendar cal = new GregorianCalendar(year, month, day);
-        setDate(cal);
+        Calendar cal = Calendar.getInstance();
+        cal.set(year, month, day);
+
+        // Update Date
+        exDate = cal.getTime();
+        // Update Date Text View
+        SimpleDateFormat simpleDate = new SimpleDateFormat("MM/dd/yyyy");
+        dateText.setText(simpleDate.format(exDate));
+        //Notify UI of Change
+
     }
 
     public static class DatePickerFragment extends DialogFragment {
