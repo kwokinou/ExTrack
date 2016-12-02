@@ -13,8 +13,6 @@ public class Event {
     private Double eventTotal;
     private Date startDate;
     private Date endDate;
-    // total amount
-
 
     // todo add expense total and expense total method
 
@@ -34,6 +32,8 @@ public class Event {
         this.endDate = endDate;
 
         this.calcTotal();
+
+
 
     }
 
@@ -231,10 +231,9 @@ public class Event {
 
 
     public String toString() {
-        if (this.expenses == null || this.expenses.size() == 0) {
-            return this.eventName + " : 0";
-        }
-        return this.eventName + " : " + "$" + this.eventTotal;
+        return this.eventName + " : " + "total = $" + this.eventTotal +
+                "  " + "limit =$" + this
+                .limit;
 
     }
 

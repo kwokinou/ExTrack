@@ -146,8 +146,6 @@ public class AddExpActivity extends AppCompatActivity
 
                 String finalVendor = vendor.getText().toString();
 
-
-
                 Expense expense = new Expense(
                         vendor.getText().toString(),        //vendor
                         exCurrency,                               //currency
