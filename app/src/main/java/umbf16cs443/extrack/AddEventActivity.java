@@ -7,6 +7,9 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import umbf16cs443.extrack.db.DBHelper;
 import umbf16cs443.extrack.db.models.Event;
 
@@ -17,6 +20,12 @@ public class AddEventActivity extends AppCompatActivity {
     EditText nameInput;
     EditText limitInput;
     DBHelper db;
+
+    Date startDate;
+    Date endDate;
+
+    Calendar cal;
+
 
     long limit;
 
@@ -48,6 +57,12 @@ public class AddEventActivity extends AppCompatActivity {
             //return to activity showing all Events
             case R.id.save:
 
+                // Replace these with date picker inputs
+
+                startDate = new Date();
+                endDate = new Date();
+
+
                 if(nameInput.getText().toString().equals("")){
 
 
@@ -62,15 +77,28 @@ public class AddEventActivity extends AppCompatActivity {
                     limit = Long.parseLong(limitInput.getText().toString());
 
                 }
-
+                Event event;
 
                 // some null values for now
-                Event event = new Event(
-                        nameInput.getText().toString(), //name
-                        null,                           //expense list
-                        limit,                          //limit
-                        0,                              //start date
-                        0);                             // end date
+                if(startDate != null && endDate != null) {
+
+                    event = new Event(
+                            nameInput.getText().toString(), //name
+                            null,                           //expense list
+                            limit,                          //limit
+                            startDate,                              //start date
+                            endDate);                             // end date
+
+                }
+                else{
+                    event = new Event(
+                            nameInput.getText().toString(), //name
+                            null,                           //expense list
+                            limit,                          //limit
+                            0,                              //start date
+                            0);                             // end date
+
+                }
 
                 db.addEvent(event);
 

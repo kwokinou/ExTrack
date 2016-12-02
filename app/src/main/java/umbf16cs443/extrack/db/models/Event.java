@@ -1,6 +1,7 @@
 package umbf16cs443.extrack.db.models;
 
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.Date;
 
 public class Event {
@@ -9,8 +10,11 @@ public class Event {
     private String eventName;
     private ArrayList<Expense> expenses;
     private long limit;
+    private Double eventTotal;
     private Date startDate;
     private Date endDate;
+    // total amount
+
 
     // todo add expense total and expense total method
 
@@ -28,6 +32,9 @@ public class Event {
         this.limit = limit;
         this.startDate = startDate;
         this.endDate = endDate;
+
+        this.calcTotal();
+
     }
 
     // No ID Constructor - Date long
@@ -46,11 +53,14 @@ public class Event {
             this.endDate = new Date(endDate);
         }
 
+        this.calcTotal();
+
     }
     // ID Constructor Date object
 
     public Event(int id, String eventName, ArrayList<Expense>
-            expenseList, long limit, Date startDate, Date endDate) {
+            expenseList, long limit, Date startDate, Date
+                         endDate) {
 
         this.eventId = id;
         this.eventName = eventName;
@@ -58,6 +68,9 @@ public class Event {
         this.limit = limit;
         this.startDate = startDate;
         this.endDate = endDate;
+
+        this.calcTotal();
+
     }
 
     // ID Constructor Date long
@@ -78,14 +91,37 @@ public class Event {
             this.endDate = new Date(endDate);
         }
 
+        this.calcTotal();
+
     }
+
+    // This is the constructor for the DB, which will store event Total
+
+    public Event(int id, String eventName, ArrayList<Expense> expenseList, long
+            limit, Double eventTotal, long startDate, long endDate) {
+
+        this.eventId = id;
+        this.eventName = eventName;
+        this.expenses = expenseList;
+        this.limit = limit;
+        this.eventTotal = eventTotal;
+
+        if (startDate != 0) {
+            this.startDate = new Date(startDate);
+        }
+        if (endDate != 0) {
+            this.endDate = new Date(endDate);
+        }
+
+    }
+
+    // **********************************************************************
+    // Getters and or setters
+    // **********************************************************************
+
 
     public int getEventId() {
         return eventId;
-    }
-
-    public void setEventId(int eventId) {
-        this.eventId = eventId;
     }
 
     public String getEventName() {
@@ -95,7 +131,6 @@ public class Event {
     public void setEventName(String eventName) {
         this.eventName = eventName;
     }
-
 
     public long getLimit() {
         return limit;
@@ -121,6 +156,10 @@ public class Event {
         this.endDate = endDate;
     }
 
+    public Double getEventTotal() {
+        return eventTotal;
+    }
+
     // **********************************************************************
     // Expense List Methods
     // **********************************************************************
@@ -140,6 +179,8 @@ public class Event {
         }
 
         expenses.add(expense);
+        this.calcTotal();
+
     }
 
     // by index
@@ -148,8 +189,10 @@ public class Event {
             expenses.remove(index);
 
         }
+        this.calcTotal();
 
     }
+
 
     // by comparision
     public void deleteExpense(Expense expense) {
@@ -165,7 +208,21 @@ public class Event {
 
             }
         }
+        this.calcTotal();
 
+
+    }
+
+    private void calcTotal() {
+        this.eventTotal = 0.0;
+
+        if (expenses != null) {
+            if (expenses.size() != 0) {
+                for (Expense e : this.expenses) {
+                    this.eventTotal += e.getExAmount();
+                }
+            }
+        }
     }
 
     // **********************************************************************
@@ -177,7 +234,7 @@ public class Event {
         if (this.expenses == null || this.expenses.size() == 0) {
             return this.eventName + " : 0";
         }
-        return this.eventName + " : " + expenses.size();
+        return this.eventName + " : " + "$" + this.eventTotal;
 
     }
 
