@@ -131,9 +131,6 @@ public class Expense {
         this.exCategory = category;
         this.exDateStamp = exDate.getTime();
 
-
-
-
     }
 
     public Expense(int id, String exVendor, String currency, Double
