@@ -17,6 +17,8 @@ import umbf16cs443.extrack.db.models.*; //add all models to helper
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 //This method is pretty massive and could probably be broken up into sub-methods
@@ -27,15 +29,20 @@ import java.util.List;
 
 
 public class DBHelper extends SQLiteOpenHelper {
+
+    // For writing datetime
+    Calendar calendar;
+    Date currentTime;
+
     // Database Version
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 9;
     // Database Name
     private static final String DATABASE_NAME = "exTrackDB";
     // Table Names
     private static final String TABLE_EXPENSES = "expenses";
     private static final String TABLE_CATEGORIES = "categories";
-
-//    private static final String TABLE_REPORTS = "reports";
+    private static final String TABLE_EVENTS = "events";
+    private static final String TABLE_EVENTS_TO_EXPENSES = "events_to_expenses";
 
     // Common column names
     private static final String KEY_ID = "id";
@@ -50,18 +57,19 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String KEY_CURRENCY = "expenses_currency";
     private static final String KEY_AMOUNT = "expenses_amount";
     private static final String KEY_RECEIPT = "expenses_receipt";
-    //    private static final String KEY_EXYEAR = "expense_year";
-//    private static final String KEY_EXMONTH = "expense_month";
-//   private static final String KEY_EXDAY = "expense_day";
     private static final String KEY_EXDATE = "expenses_date";
     private static final String KEY_EXCAT = "expenses_category";
 
-    // REPORTS Table - column names
-    private static final String KEY_REPORT_NAME = "report_name";
-    //start date
-    //end date
+    // EVENT Table - column names
+    private static final String KEY_EVENT_NAME = "event_name";
+    private static final String KEY_EVENT_LIMIT = "event_limit";
+    private static final String KEY_EVENT_START_DATE = "event_start_date";
+    private static final String KEY_EVENT_END_DATE = "event_end_date";
+    private static final String KEY_EVENT_TOTAL = "event_total";
 
-
+    // EVENT TO EXPENSE - mapping table column names
+    private static final String KEY_EVENT_ID = "event_pk";
+    private static final String KEY_EXPENSE_ID = "expense_fk";
     // Coming Soon
 
 
@@ -80,7 +88,7 @@ public class DBHelper extends SQLiteOpenHelper {
             KEY_CAT_NAME + " TEXT,"
             + KEY_CREATED_AT + " DATETIME" + ")";
 
-    //todo expense table
+
     private static final String CREATE_TABLE_EXPENSES = "CREATE TABLE " +
             TABLE_EXPENSES + "(" +
             KEY_ID + " INTEGER PRIMARY KEY," +
@@ -88,38 +96,54 @@ public class DBHelper extends SQLiteOpenHelper {
             KEY_CURRENCY + " INTEGER," +
             KEY_AMOUNT + " REAL," +
             KEY_RECEIPT + " TEXT," +
-            //          KEY_EXYEAR + " INTEGER" +
-            //           KEY_EXMONTH + " INTEGER" +
-            //           KEY_EXDAY + " INTEGER" +
-            KEY_EXDATE + " INTEGER" +
-            KEY_EXCAT  + " INTEGER" +
+            KEY_EXDATE + " INTEGER," +
+            KEY_EXCAT + " INTEGER," +
             KEY_CREATED_AT + " DATETIME" + ")";
 
-    //todo report table
 
-    //todo relational tables
+    private static final String CREATE_TABLE_EVENTS = "CREATE TABLE " +
+            TABLE_EVENTS + "(" +
+            KEY_ID + " INTEGER PRIMARY KEY," +
+            KEY_EVENT_NAME + " TEXT," +
+            KEY_EVENT_LIMIT + " INTEGER," +
+            KEY_EVENT_START_DATE + " INTEGER," +
+            KEY_EVENT_END_DATE + " INTEGER," +
+            KEY_EVENT_TOTAL + " REAL," +
+            KEY_CREATED_AT + " DATETIME" + ")";
+
+    private static final String CREATE_TABLE_EVENTS_TO_EXPENSES = "CREATE TABLE " +
+            TABLE_EVENTS_TO_EXPENSES + "(" +
+            KEY_ID + " INTEGER PRIMARY KEY," +
+            KEY_EVENT_ID + " INTEGER," +
+            KEY_EXPENSE_ID + " INTEGER," +
+            KEY_CREATED_AT + " DATETIME" + ")";
+
+    //todo relational table for events and expenses
 
 
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        //todo: these
-
         // creating required tables
-        db.execSQL(CREATE_TABLE_EXPENSES);
         db.execSQL(CREATE_TABLE_CATEGORIES);
-//        db.execSQL(CREATE_TABLE_REPORTS);
+        db.execSQL(CREATE_TABLE_EXPENSES);
+        db.execSQL(CREATE_TABLE_EVENTS);
+        db.execSQL(CREATE_TABLE_EVENTS_TO_EXPENSES);
+
 
 // todo implement relation tables
 
     }
+
+// todo - have the on upgrade port old table over to new schema (if time)
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // on upgrade drop older tables
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_EXPENSES);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CATEGORIES);
-//        db.execSQL("DROP TABLE IF EXISTS " + TABLE_REPORTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENTS_TO_EXPENSES);
 
         // create new tables
         onCreate(db);
@@ -135,6 +159,11 @@ public class DBHelper extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(KEY_CAT_NAME, category.getCatName());
+
+        calendar = Calendar.getInstance();
+        currentTime = calendar.getTime();
+
+        values.put(KEY_CREATED_AT, currentTime.getTime());
 
         db.insert(TABLE_CATEGORIES, null, values);
         db.close();
@@ -153,7 +182,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
         Category category = new Category(Integer.parseInt(cursor.getString(0)),
                 cursor.getString(1));
-        // return contact
         return category;
     }
 
@@ -173,12 +201,10 @@ public class DBHelper extends SQLiteOpenHelper {
                 Category category = new Category();
                 category.setId(Integer.parseInt(cursor.getString(0)));
                 category.setCatName(cursor.getString(1));
-                // Adding contact to list
                 categoryList.add(category);
             } while (cursor.moveToNext());
         }
 
-        // return contact list
         return categoryList;
 
     }
@@ -202,6 +228,12 @@ public class DBHelper extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(KEY_CAT_NAME, category.getCatName());
+
+        calendar = Calendar.getInstance();
+        currentTime = calendar.getTime();
+
+        values.put(KEY_CREATED_AT, currentTime.getTime());
+
 
         // updating row
         return db.update(TABLE_CATEGORIES, values, KEY_ID + " = ?",
@@ -230,20 +262,22 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(KEY_CURRENCY, expense.getExCurrencyCode());
         values.put(KEY_AMOUNT, expense.getExAmount());
         values.put(KEY_RECEIPT, expense.getExReceipt());
-//        values.put(KEY_EXYEAR, expense.getExYear());
-//        values.put(KEY_EXMONTH, expense.getExMonth());
-//        values.put(KEY_EXDAY, expense.getExDay());
         values.put(KEY_EXDATE, expense.getExDateStamp());
 
-
-        if(expense.getCategory() != null) {
+        if (expense.getCategory() != null) {
             values.put(KEY_EXCAT, expense.getCategory().getId());
+        } else {
+            values.put(KEY_EXCAT, (byte[]) null);
         }
+
+        calendar = Calendar.getInstance();
+        currentTime = calendar.getTime();
+
+        values.put(KEY_CREATED_AT, currentTime.getTime());
 
         db.insert(TABLE_EXPENSES, null, values);
         db.close();
 
-        //todo map categories
     }
 
     public Expense fetchExpense(int id) {
@@ -255,19 +289,26 @@ public class DBHelper extends SQLiteOpenHelper {
         if (cursor != null)
             cursor.moveToFirst();
 
+        Category tempCat = null;
+        String str = cursor.getString(6);
+
+        if (str == null || str.isEmpty() || str.equalsIgnoreCase("null")) {
+            tempCat = null;
+        } else {
+            tempCat = fetchCategory(Integer.parseInt(cursor.getString(6)));
+        }
+
         Expense expense = new Expense(
-                Integer.parseInt(cursor.getString(0)),      //id
-                cursor.getString(1),                        //vendor
-                cursor.getString(2),                        //currency
-                Double.parseDouble(cursor.getString(3)),    //amount
-                cursor.getString(4),                        //receipt
-                Long.parseLong(cursor.getString(5)),      //dateStamp
+                Integer.parseInt(cursor.getString(0)),    // id
+                cursor.getString(1),                      // vendor
+                cursor.getString(2),                      // currency
+                Double.parseDouble(cursor.getString(3)),  // amount
+                cursor.getString(4),                      // receipt
+                Long.parseLong(cursor.getString(5)),      // dateStamp
 
-                null                                        //todo getcategories
-
+                tempCat                                   // getcategories
 
         );
-        // return contact
         return expense;
     }
 
@@ -283,6 +324,15 @@ public class DBHelper extends SQLiteOpenHelper {
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
+                Category tempCat = null;
+                String cat = cursor.getString(6);
+
+                if (cat == null || cat.isEmpty() || cat.equalsIgnoreCase("null")) {
+                    tempCat = null;
+                } else {
+                    tempCat = fetchCategory(Integer.parseInt(cat));
+                }
+
                 Expense expense = new Expense(
                         Integer.parseInt(cursor.getString(0)),      //id
                         cursor.getString(1),                        //vendor
@@ -290,14 +340,13 @@ public class DBHelper extends SQLiteOpenHelper {
                         Double.parseDouble(cursor.getString(3)),    //amount
                         cursor.getString(4),                        //receipt
                         Long.parseLong(cursor.getString(5)),      //dateStamp
-           //             fetchCategory(Integer.parseInt(cursor.getString(6)))
-                        null //TODO FIX CATEGORIES
+                        //             fetchCategory(Integer.parseInt(cursor.getString(6)))
+                        tempCat
                 );
                 expenseList.add(expense);
             } while (cursor.moveToNext());
         }
 
-        // return contact list
         return expenseList;
 
     }
@@ -326,7 +375,17 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(KEY_AMOUNT, expense.getExAmount());
         values.put(KEY_RECEIPT, expense.getExReceipt());
         values.put(KEY_EXDATE, expense.getExDateStamp());
-        values.put(KEY_EXCAT, expense.getCategory().getId());
+
+        if (expense.getCategory() != null) {
+            values.put(KEY_EXCAT, expense.getCategory().getId());
+        } else {
+            values.put(KEY_EXCAT, (byte[]) null);
+        }
+
+        calendar = Calendar.getInstance();
+        currentTime = calendar.getTime();
+
+        values.put(KEY_CREATED_AT, currentTime.getTime());
 
         return db.update(TABLE_EXPENSES, values, KEY_ID + " = ?",
                 new String[]{String.valueOf(expense.getId())});
@@ -342,8 +401,256 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
 // ####################################################################### //
-// Report Helper Method
+// Event Helper Method
 // ####################################################################### //
 
+
+    public void addEvent(Event event) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+
+        // set event values
+        values.put(KEY_EVENT_NAME, event.getEventName());
+        values.put(KEY_EVENT_LIMIT, event.getLimit());
+
+        if (event.getStartDate() != null) {
+            values.put(KEY_EVENT_START_DATE, event.getStartDate().getTime());
+        } else {
+            values.put(KEY_EVENT_START_DATE, 0);
+
+        }
+        if (event.getEndDate() != null) {
+            values.put(KEY_EVENT_END_DATE, event.getEndDate().getTime());
+        } else {
+            values.put(KEY_EVENT_END_DATE, 0);
+
+        }
+
+        calendar = Calendar.getInstance();
+        currentTime = calendar.getTime();
+
+        values.put(KEY_EVENT_TOTAL, event.getEventTotal());
+
+        values.put(KEY_CREATED_AT, currentTime.getTime());
+
+        long eventID = db.insert(TABLE_EVENTS, null, values);
+
+
+        // todo map events to expenses
+
+        if (event.getExpenses() != null) {
+
+            ContentValues exvalues = new ContentValues();
+
+            ArrayList<Expense> eventExpenses = event.getExpenses();
+
+            for (Expense e : eventExpenses) {
+                exvalues.put(KEY_EVENT_ID, eventID);
+                exvalues.put(KEY_EXPENSE_ID, e.getId());
+            }
+
+            db.insert(TABLE_EVENTS_TO_EXPENSES, null, exvalues);
+
+            // todo add events to mapping database
+            db.close();
+        }
+    }
+
+    public Event fetchEvent(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        Cursor cursor = db.query(TABLE_EVENTS, null,
+                KEY_ID + "=?",
+                new String[]{String.valueOf(id)}, null, null, null, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        Event event = new Event(
+                Integer.parseInt(cursor.getString(0)),   // id
+                cursor.getString(1),                     // name
+                null,                                    // expenses
+                Long.parseLong(cursor.getString(2)),     // limit
+                Long.parseLong(cursor.getString(3)),     // start date
+                Long.parseLong(cursor.getString(4))      // end date
+        );
+
+        ArrayList<Expense> eventExpenses = new ArrayList<Expense>();
+
+        int eventID = event.getEventId();
+
+
+//        query(String table, String[]columns, String selection, String[]
+//        selectionArgs, String groupBy, String having, String orderBy, String
+//        limit)
+
+        cursor = db.query(TABLE_EVENTS_TO_EXPENSES, null, KEY_EVENT_ID + "=" +
+                String.valueOf
+                        (eventID), null, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+
+                int expenseID = Integer.parseInt(cursor.getString(2));
+                Expense nextExpense = fetchExpense(expenseID);
+                event.addExpense(nextExpense);
+
+            } while (cursor.moveToNext());
+            //todo add relevent expenses
+
+            event.setExpenses(eventExpenses);
+
+        }
+
+        return event;
+
+    }
+
+
+    public ArrayList<Event> getAllEvents() {
+
+        ArrayList<Event> eventList = new ArrayList<Event>();
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + TABLE_EVENTS;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        Cursor expenseCursor;
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+
+                Event event = new Event(
+                        Integer.parseInt(cursor.getString(0)),   // id
+                        cursor.getString(1),                     // name
+                        null,                                    // expenses
+                        Long.parseLong(cursor.getString(2)),     // limit
+                        Long.parseLong(cursor.getString(3)),     // start date
+                        Long.parseLong(cursor.getString(4))      // end date
+                );
+
+                //todo move cursor to mapping table
+
+                int eventID = event.getEventId();
+
+                expenseCursor = db.query(TABLE_EVENTS_TO_EXPENSES, null,
+                        KEY_EVENT_ID + "=" +
+                                String.valueOf
+                                        (eventID), null, null, null, null);
+
+                if (expenseCursor.moveToFirst()) {
+                    do {
+
+                        int expenseID = Integer.parseInt(expenseCursor.getString(2));
+                        Expense nextExpense = fetchExpense(expenseID);
+                        event.addExpense(nextExpense);
+
+                    } while (expenseCursor.moveToNext());
+                }
+                eventList.add(event);
+
+            } while (cursor.moveToNext());
+
+
+        }
+
+
+        return eventList;
+
+    }
+
+    public int getEventCount() {
+        int num;
+
+        String countQuery = "SELECT  * FROM " + TABLE_EVENTS;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+        num = cursor.getCount();
+        cursor.close();
+        // return count
+        return num;
+
+    }
+
+    public int updateEvent(Event event) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        // set event values
+        values.put(KEY_EVENT_NAME, event.getEventName());
+        values.put(KEY_EVENT_LIMIT, event.getLimit());
+        values.put(KEY_EVENT_START_DATE, event.getStartDate().getTime());
+        values.put(KEY_EVENT_END_DATE, event.getEndDate().getTime());
+
+        calendar = Calendar.getInstance();
+        currentTime = calendar.getTime();
+
+        values.put(KEY_CREATED_AT, currentTime.getTime());
+
+        db.delete(TABLE_EVENTS_TO_EXPENSES, KEY_EVENT_ID + " =?",
+                new String[]{String.valueOf(event.getEventId())});
+
+        int eventID = event.getEventId();
+
+        if (event.getExpenses() != null) {
+
+            ContentValues exvalues = new ContentValues();
+
+            ArrayList<Expense> eventExpenses = event.getExpenses();
+
+            for (Expense e : eventExpenses) {
+                exvalues.put(KEY_EVENT_ID, eventID);
+                exvalues.put(KEY_EXPENSE_ID, e.getId());
+            }
+
+            db.insert(TABLE_EVENTS_TO_EXPENSES, null, exvalues);
+
+        }
+
+        eventID = db.update(TABLE_EVENTS, values, KEY_ID + " = ?",
+                new String[]{String.valueOf(event.getEventId())});
+
+        db.close();
+
+        return eventID;
+
+    }
+
+    public void deleteEvent(Event event) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_EVENTS, KEY_ID + " = ?",
+                new String[]{String.valueOf(event.getEventId())});
+
+        db.delete(TABLE_EVENTS_TO_EXPENSES, KEY_EVENT_ID + " =?",
+                new String[]{String.valueOf(event.getEventId())});
+
+        db.close();
+    }
+
+
+    public ArrayList<Event> getEventsByExpense(Expense expense) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ArrayList<Event> events = new ArrayList<>();
+        int expenseID = expense.getId();
+
+        Cursor cursor = db.query(TABLE_EVENTS_TO_EXPENSES, null,
+                KEY_EXPENSE_ID + "=" +
+                        String.valueOf
+                                (expenseID), null, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Event event = fetchEvent(Integer.parseInt(cursor.getString(1)));
+                events.add(event);
+
+            } while (cursor.moveToNext());
+        }
+        return events;
+
+    }
+
+
 }
-//coming soon

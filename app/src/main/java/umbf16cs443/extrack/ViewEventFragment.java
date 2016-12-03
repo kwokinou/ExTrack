@@ -13,6 +13,11 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.util.ArrayList;
+
+import umbf16cs443.extrack.db.DBHelper;
+import umbf16cs443.extrack.db.models.Event;
+
 
 /**
  * Created by kwokin on 11/24/2016.
@@ -22,24 +27,23 @@ public class ViewEventFragment extends ListFragment {
     OnEventSelectedListener mCallback;
 
     //sample event list
-    String[] Events = {
-            "Event1",
-            "Event2",
-            "Event3",
-            "Event4"
-    };
+    ArrayList<Event> events;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true); //show action bar buttons
 
+        DBHelper db = new DBHelper(getContext());
+        events = db.getAllEvents();
+
         //list layout for list view
         int layout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
                 android.R.layout.simple_list_item_activated_1 : android.R.layout.simple_list_item_1;
 
         //set up array adapter to display events
-        setListAdapter(new ArrayAdapter<String>(getActivity(), layout, Events));
+        setListAdapter(new ArrayAdapter<Event>(getActivity(), layout, events));
+
     }
 
     //action menu buttons
