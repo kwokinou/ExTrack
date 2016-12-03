@@ -3,10 +3,8 @@ package umbf16cs443.extrack;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -26,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Currency;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Set;
 
 import umbf16cs443.extrack.db.DBHelper;
@@ -60,12 +57,7 @@ public class AddExpActivity extends AppCompatActivity
     TextView dateText;                  // displays date selected
     Spinner catSpinner;                 // select category
     Category exCat;                     // expense category
-    EditText vendor;
-    // TODO Curreny will go here
-    // TODO RECEIPT
-    EditText amount;
-    Date date;
-    Category category;
+    DBHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +65,7 @@ public class AddExpActivity extends AppCompatActivity
         setContentView(R.layout.add_an_exp);
         setTitle("Add an Expense");
 
-        DBHelper db = new DBHelper(getApplicationContext());
+        db = new DBHelper(getApplicationContext());
         catArray = db.getAllCategories();
         Calendar calendar = Calendar.getInstance();
 
@@ -96,9 +88,7 @@ public class AddExpActivity extends AppCompatActivity
         dateText.setText(simpleDate.format(exDate));
 
         //set up spinner for category selection
-        spinner = (Spinner) findViewById(R.id.spinner);
-
-        catSpinner = (Spinner) findViewById(R.id.spinner);
+        catSpinner = (Spinner) findViewById(R.id.spinner1);
         //category_names is defined in strings xml as an example to populate spinner adapter
         adapter = new ArrayAdapter<Category>(this, android.R.layout
                 .simple_spinner_item,
@@ -109,19 +99,13 @@ public class AddExpActivity extends AppCompatActivity
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 exCat = (Category) parent.getItemAtPosition(position);
-
-                Toast.makeText(getBaseContext(), parent.getItemAtPosition
-                        (position) + " selected", Toast.LENGTH_SHORT).show();
-
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id){
-              //  Toast.makeText(getBaseContext(),parent.getItemAtPosition(position)+" selected", Toast.LENGTH_LONG).show();
-               // category = (Category) parent.getItemAtPosition(position);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+
     }
 
     //include save button in menu bar
@@ -139,34 +123,18 @@ public class AddExpActivity extends AppCompatActivity
             case R.id.save:
 
                 if(vendor.getText().toString().equals("")){
-
-
                     Toast.makeText(getApplicationContext(),R.string
                             .blank_vendor_error , Toast.LENGTH_SHORT ).show();
                     return false;
-
                 }
 
                 if(amount.getText().toString().equals("")){
                     Toast.makeText(getApplicationContext(),R.string
                             .blank_amount_error , Toast.LENGTH_SHORT ).show();
                     return false;
-
                 }
 
-                String finalVendor = vendor.getText().toString();
-                    vendor = (EditText) findViewById(R.id.vendor);
-                    String finalVendor = vendor.getText().toString();
-                    //TODO GRAB CURRENCY
-                    amount = (EditText) findViewById(R.id.amount);
-                    //TODO receipt
-                    //TODO getCategory
-
-                //Only create Expense obj if at least vendor and amount provided
-                if(!vendor.getText().toString().equals("") &&
-                        !amount.getText().toString().equals("")){
-
-                    Expense expense = new Expense(
+                Expense expense = new Expense(
                         vendor.getText().toString(),        //vendor
                         exCurrency,                               //currency
                         Double.parseDouble(amount.getText().toString()), //amount
@@ -174,14 +142,7 @@ public class AddExpActivity extends AppCompatActivity
                         exDate, // date
                         exCat); //category
 
-                DBHelper db = new DBHelper(getApplicationContext());
                 db.addExpense(expense);
-
-                    DBHelper db = new DBHelper(getApplicationContext());
-                    db.addExpense(expense);
-                }
-                else
-                    Toast.makeText(getBaseContext(),"Required Fields: Vendor, Amount", Toast.LENGTH_SHORT).show();
                 finish();
                 break;
 
@@ -220,8 +181,6 @@ public class AddExpActivity extends AppCompatActivity
                             .simple_spinner_dropdown_item);
                     catSpinner.setAdapter(adapter);
 
-                    adapter.add(newCat);
-                    adapter.notifyDataSetChanged();
                 }
 
             }
@@ -238,8 +197,7 @@ public class AddExpActivity extends AppCompatActivity
     }
 //end of addCategory**************************************************************************
 
-    // add currency
-
+    // add currency***************************************************************************
     public void setCurrency(View view) {
 
         tempCurrency = exCurrency;
@@ -271,10 +229,7 @@ public class AddExpActivity extends AppCompatActivity
         currencySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
                 tempCurrency = (Currency) parent.getItemAtPosition(position);
-
-
             }
 
             @Override
@@ -282,16 +237,11 @@ public class AddExpActivity extends AppCompatActivity
             }
         });
 
-
-
-
         alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 exCurrency = tempCurrency;
                 currencyText.setText(exCurrency.toString());
-
-
             }
         });
 
@@ -301,9 +251,8 @@ public class AddExpActivity extends AppCompatActivity
             }
         });
         alert.show();
-
-
     }
+//end of currency setting*************************************************************************
 
 
     //code for setting up DatePicker**************************************************************
@@ -318,11 +267,6 @@ public class AddExpActivity extends AppCompatActivity
     }
 
     public void onDateSet(DatePicker view, int year, int month, int day) {
-        //Calendar cal = Calendar.getInstance();
-        Calendar cal = new GregorianCalendar(year, month, day);
-        setDate(cal);
-        //cal.set(year, month, day);
-        //date = cal.getTime();
         Calendar cal = Calendar.getInstance();
         cal.set(year, month, day);
 

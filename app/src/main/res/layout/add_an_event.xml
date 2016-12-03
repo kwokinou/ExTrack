@@ -17,10 +17,4 @@
         android:inputType="numberDecimal"
         android:hint="@string/limit" />
 
-    <EditText
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/cost_limit_currency"
-        android:hint="@string/cost_limit_currency"/>
-
 </LinearLayout>

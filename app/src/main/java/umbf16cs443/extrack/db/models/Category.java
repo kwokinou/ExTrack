@@ -6,7 +6,7 @@ public class Category {
     int id;
     String catName;
 
-        // Constructors
+    // Constructors
     public Category() {
     }
 

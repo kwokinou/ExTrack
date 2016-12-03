@@ -1,32 +1,18 @@
 package umbf16cs443.extrack;
 
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.Toast;
-
-import java.util.ArrayList;
-
-import umbf16cs443.extrack.db.DBHelper;
-import umbf16cs443.extrack.db.models.Expense;
 
 public class MainActivity extends AppCompatActivity
         implements ViewExpFragment.OnExpSelectedListener,
-                   ViewEventFragment.OnEventSelectedListener{
+        ViewEventFragment.OnEventSelectedListener{
 
-    boolean expView = false;
+    boolean expView = true;
     ViewExpFragment viewExpFrag;
     ViewEventFragment viewEventFrag;
 
@@ -35,12 +21,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-        //Initially fill Framelayout with a simple helper message
-        HelpMsgFragment newFragment = new HelpMsgFragment();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, newFragment);
-        transaction.commit();
+        viewExps(null);//Show Expenses listFragment by default
     }
 
     //user clicked on Expenses
@@ -104,8 +85,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onResume(){
         super.onResume();
-        if(expView){
+        if(expView==true){
             viewExpFrag.updateExpListView();
         }
+        else if(expView == false) viewEventFrag.updateEventListView();
     }
 }
