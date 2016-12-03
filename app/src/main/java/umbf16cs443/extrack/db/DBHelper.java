@@ -396,6 +396,10 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_EXPENSES, KEY_ID + " = ?",
                 new String[]{String.valueOf(expense.getId())});
+
+        db.delete(TABLE_EVENTS_TO_EXPENSES, KEY_EXPENSE_ID + " =?",
+                new String[]{String.valueOf(expense.getId())});
+
         db.close();
     }
 
@@ -497,7 +501,6 @@ public class DBHelper extends SQLiteOpenHelper {
                 event.addExpense(nextExpense);
 
             } while (cursor.moveToNext());
-            //todo add relevent expenses
 
             event.setExpenses(eventExpenses);
 
@@ -530,8 +533,6 @@ public class DBHelper extends SQLiteOpenHelper {
                         Long.parseLong(cursor.getString(3)),     // start date
                         Long.parseLong(cursor.getString(4))      // end date
                 );
-
-                //todo move cursor to mapping table
 
                 int eventID = event.getEventId();
 
