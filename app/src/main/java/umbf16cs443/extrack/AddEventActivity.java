@@ -7,8 +7,11 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 import umbf16cs443.extrack.db.DBHelper;
 import umbf16cs443.extrack.db.models.Event;
+import umbf16cs443.extrack.db.models.Expense;
 
 
 //activity to prompt user enter new event information
@@ -63,7 +66,7 @@ public class AddEventActivity extends AppCompatActivity {
                 // some null values for now
                 Event event = new Event(
                         nameInput.getText().toString(), //name
-                        null,                           //expense list
+                        new ArrayList<Expense>(),                           //expense list
                         limit,                          //limit
                         0,                              //start date
                         0);                             // end date

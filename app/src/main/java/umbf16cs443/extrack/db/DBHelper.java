@@ -446,16 +446,17 @@ public class DBHelper extends SQLiteOpenHelper {
 
         if (event.getExpenses() != null) {
 
-            ContentValues exvalues = new ContentValues();
 
             ArrayList<Expense> eventExpenses = event.getExpenses();
 
             for (Expense e : eventExpenses) {
+                ContentValues exvalues = new ContentValues();
                 exvalues.put(KEY_EVENT_ID, eventID);
                 exvalues.put(KEY_EXPENSE_ID, e.getId());
+                db.insert(TABLE_EVENTS_TO_EXPENSES, null, exvalues);
+
             }
 
-            db.insert(TABLE_EVENTS_TO_EXPENSES, null, exvalues);
 
             // todo add events to mapping database
             db.close();
@@ -583,8 +584,12 @@ public class DBHelper extends SQLiteOpenHelper {
         // set event values
         values.put(KEY_EVENT_NAME, event.getEventName());
         values.put(KEY_EVENT_LIMIT, event.getLimit());
-        values.put(KEY_EVENT_START_DATE, event.getStartDate().getTime());
-        values.put(KEY_EVENT_END_DATE, event.getEndDate().getTime());
+        if (event.getStartDate() != null) {
+            values.put(KEY_EVENT_START_DATE, event.getStartDate().getTime());
+        }
+        if (event.getEndDate() != null) {
+            values.put(KEY_EVENT_END_DATE, event.getEndDate().getTime());
+        }
 
         calendar = Calendar.getInstance();
         currentTime = calendar.getTime();

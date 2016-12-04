@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -126,21 +127,17 @@ public class EditEventActivity extends AppCompatActivity {
         ((EditText) findViewById(R.id.limitAmt)).setText(String.valueOf(event.getLimit())); //prefill limit
 
         //display expense count for selected event
-        if (event.getExpenses() == null)
-            ((TextView) findViewById(R.id.expCount)).setText(String.valueOf(0));
-        else
+       // if (event.getExpenses() == null)
+         //   ((TextView) findViewById(R.id.expCount)).setText(String.valueOf(0));
+       // else
             ((TextView) findViewById(R.id.expCount)).setText(String.valueOf(event.getExpenses().size()));
 
         //display event total dollar amount
         ((TextView) findViewById(R.id.eventAmt)).setText(String.valueOf(event.getEventTotal()));
 
-
-        //*******************populate expenses belong to event in ListView*********************
-        //layout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
-          //      android.R.layout.simple_list_item_activated_1 : android.R.layout.simple_list_item_1;
+        //display event's expenses by default
         showCurExpenses(null);
 
-        //*************************************************************************************
     }
 
     //include save and delete button in menu bar
@@ -156,6 +153,13 @@ public class EditEventActivity extends AppCompatActivity {
             //TODO user clicked on save to store updated Event object
             //return to activity showing all Events
             case R.id.saveEvent:
+
+                //save the updated Event info
+                event.setEventName(((EditText)findViewById(R.id.eventName)).getText().toString());
+                event.setLimit(Long.valueOf(((EditText)findViewById(R.id.limitAmt)).getText().toString()));
+
+                db.updateEvent(event);
+
                 finish();
                 break;
 

@@ -58,6 +58,7 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Medium Text"
             android:id="@+id/limitAmt"
+            android:inputType="numberDecimal"
             android:layout_below="@+id/eventName_text"
             android:layout_alignStart="@+id/eventName_text"
             android:layout_marginTop="32dp"
