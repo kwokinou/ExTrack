@@ -86,7 +86,9 @@ public class EditExpActivity extends AppCompatActivity {
 
         //TODO display previously filled in expense date, category, and event
         // Set New Expense Variables To Defaults
-        exDate = calendar.getTime();
+        //exDate = calendar.getTime();
+
+        exDate = exp.getExDate();
 
         exCurrency = Currency.getInstance("USD");
         exCurrency = exp.getCurrency();
