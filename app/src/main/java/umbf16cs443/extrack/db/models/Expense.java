@@ -72,9 +72,6 @@ public class Expense {
 
     }
 
-
-
-
     public Expense(String exVendor, Currency currency, Double
             exAmount, String exReceipt, Date date,
                    Category category) {
