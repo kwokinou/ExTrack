@@ -30,11 +30,12 @@ import java.util.List;
 
 public class DBHelper extends SQLiteOpenHelper {
 
+    // For writing datetime
     Calendar calendar;
     Date currentTime;
 
     // Database Version
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 9;
     // Database Name
     private static final String DATABASE_NAME = "exTrackDB";
     // Table Names
@@ -64,6 +65,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String KEY_EVENT_LIMIT = "event_limit";
     private static final String KEY_EVENT_START_DATE = "event_start_date";
     private static final String KEY_EVENT_END_DATE = "event_end_date";
+    private static final String KEY_EVENT_TOTAL = "event_total";
 
     // EVENT TO EXPENSE - mapping table column names
     private static final String KEY_EVENT_ID = "event_pk";
@@ -106,6 +108,7 @@ public class DBHelper extends SQLiteOpenHelper {
             KEY_EVENT_LIMIT + " INTEGER," +
             KEY_EVENT_START_DATE + " INTEGER," +
             KEY_EVENT_END_DATE + " INTEGER," +
+            KEY_EVENT_TOTAL + " REAL," +
             KEY_CREATED_AT + " DATETIME" + ")";
 
     private static final String CREATE_TABLE_EVENTS_TO_EXPENSES = "CREATE TABLE " +
@@ -156,6 +159,11 @@ public class DBHelper extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(KEY_CAT_NAME, category.getCatName());
+
+        calendar = Calendar.getInstance();
+        currentTime = calendar.getTime();
+
+        values.put(KEY_CREATED_AT, currentTime.getTime());
 
         db.insert(TABLE_CATEGORIES, null, values);
         db.close();
@@ -220,6 +228,12 @@ public class DBHelper extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(KEY_CAT_NAME, category.getCatName());
+
+        calendar = Calendar.getInstance();
+        currentTime = calendar.getTime();
+
+        values.put(KEY_CREATED_AT, currentTime.getTime());
+
 
         // updating row
         return db.update(TABLE_CATEGORIES, values, KEY_ID + " = ?",
@@ -293,7 +307,6 @@ public class DBHelper extends SQLiteOpenHelper {
                 Long.parseLong(cursor.getString(5)),      // dateStamp
 
                 tempCat                                   // getcategories
-
 
         );
         return expense;
@@ -369,6 +382,10 @@ public class DBHelper extends SQLiteOpenHelper {
             values.put(KEY_EXCAT, (byte[]) null);
         }
 
+        calendar = Calendar.getInstance();
+        currentTime = calendar.getTime();
+
+        values.put(KEY_CREATED_AT, currentTime.getTime());
 
         return db.update(TABLE_EXPENSES, values, KEY_ID + " = ?",
                 new String[]{String.valueOf(expense.getId())});
@@ -379,6 +396,10 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_EXPENSES, KEY_ID + " = ?",
                 new String[]{String.valueOf(expense.getId())});
+
+        db.delete(TABLE_EVENTS_TO_EXPENSES, KEY_EXPENSE_ID + " =?",
+                new String[]{String.valueOf(expense.getId())});
+
         db.close();
     }
 
@@ -393,44 +414,52 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
+
         // set event values
         values.put(KEY_EVENT_NAME, event.getEventName());
         values.put(KEY_EVENT_LIMIT, event.getLimit());
 
-        if(event.getStartDate() != null) {
+        if (event.getStartDate() != null) {
             values.put(KEY_EVENT_START_DATE, event.getStartDate().getTime());
-        }
-        else{
+        } else {
             values.put(KEY_EVENT_START_DATE, 0);
 
         }
-        if(event.getEndDate() != null) {
+        if (event.getEndDate() != null) {
             values.put(KEY_EVENT_END_DATE, event.getEndDate().getTime());
-        }
-        else{
+        } else {
             values.put(KEY_EVENT_END_DATE, 0);
 
         }
+
+        calendar = Calendar.getInstance();
+        currentTime = calendar.getTime();
+
+        values.put(KEY_EVENT_TOTAL, event.getEventTotal());
+
+        values.put(KEY_CREATED_AT, currentTime.getTime());
 
         long eventID = db.insert(TABLE_EVENTS, null, values);
 
 
         // todo map events to expenses
-//        ContentValues exvalues = new ContentValues();
-//
-//        ArrayList<Expense> eventExpenses = event.getExpenses();
-//        if(eventExpenses != null || eventExpenses.size() > 0){
-//            for(Expense e : eventExpenses){
-//                exvalues.put(KEY_EVENT_ID, eventID);
-//                exvalues.put(KEY_EXPENSE_ID, e.getId());
-//            }
-//        }
-//
-//        db.insert(TABLE_EVENTS_TO_EXPENSES, null, exvalues);
 
-        // todo add events to mapping database
-        db.close();
+        if (event.getExpenses() != null) {
 
+            ContentValues exvalues = new ContentValues();
+
+            ArrayList<Expense> eventExpenses = event.getExpenses();
+
+            for (Expense e : eventExpenses) {
+                exvalues.put(KEY_EVENT_ID, eventID);
+                exvalues.put(KEY_EXPENSE_ID, e.getId());
+            }
+
+            db.insert(TABLE_EVENTS_TO_EXPENSES, null, exvalues);
+
+            // todo add events to mapping database
+            db.close();
+        }
     }
 
     public Event fetchEvent(int id) {
@@ -453,15 +482,34 @@ public class DBHelper extends SQLiteOpenHelper {
 
         ArrayList<Expense> eventExpenses = new ArrayList<Expense>();
 
-        //todo move cursor to mapping table
+        int eventID = event.getEventId();
 
-        //todo add relevent expenses
 
-        event.setExpenses(eventExpenses);
+//        query(String table, String[]columns, String selection, String[]
+//        selectionArgs, String groupBy, String having, String orderBy, String
+//        limit)
 
+        cursor = db.query(TABLE_EVENTS_TO_EXPENSES, null, KEY_EVENT_ID + "=" +
+                String.valueOf
+                        (eventID), null, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+
+                int expenseID = Integer.parseInt(cursor.getString(2));
+                Expense nextExpense = fetchExpense(expenseID);
+                event.addExpense(nextExpense);
+
+            } while (cursor.moveToNext());
+
+            event.setExpenses(eventExpenses);
+
+        }
 
         return event;
+
     }
+
 
     public ArrayList<Event> getAllEvents() {
 
@@ -471,6 +519,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
+        Cursor expenseCursor;
 
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
@@ -485,12 +534,27 @@ public class DBHelper extends SQLiteOpenHelper {
                         Long.parseLong(cursor.getString(4))      // end date
                 );
 
-                //todo move cursor to mapping table
+                int eventID = event.getEventId();
 
-                //todo add relevent expenses
+                expenseCursor = db.query(TABLE_EVENTS_TO_EXPENSES, null,
+                        KEY_EVENT_ID + "=" +
+                                String.valueOf
+                                        (eventID), null, null, null, null);
+
+                if (expenseCursor.moveToFirst()) {
+                    do {
+
+                        int expenseID = Integer.parseInt(expenseCursor.getString(2));
+                        Expense nextExpense = fetchExpense(expenseID);
+                        event.addExpense(nextExpense);
+
+                    } while (expenseCursor.moveToNext());
+                }
                 eventList.add(event);
 
             } while (cursor.moveToNext());
+
+
         }
 
 
@@ -522,11 +586,37 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(KEY_EVENT_START_DATE, event.getStartDate().getTime());
         values.put(KEY_EVENT_END_DATE, event.getEndDate().getTime());
 
-        // todo map events to expenses
+        calendar = Calendar.getInstance();
+        currentTime = calendar.getTime();
 
+        values.put(KEY_CREATED_AT, currentTime.getTime());
 
-        return db.update(TABLE_EVENTS, values, KEY_ID + " = ?",
+        db.delete(TABLE_EVENTS_TO_EXPENSES, KEY_EVENT_ID + " =?",
                 new String[]{String.valueOf(event.getEventId())});
+
+        int eventID = event.getEventId();
+
+        if (event.getExpenses() != null) {
+
+            ContentValues exvalues = new ContentValues();
+
+            ArrayList<Expense> eventExpenses = event.getExpenses();
+
+            for (Expense e : eventExpenses) {
+                exvalues.put(KEY_EVENT_ID, eventID);
+                exvalues.put(KEY_EXPENSE_ID, e.getId());
+            }
+
+            db.insert(TABLE_EVENTS_TO_EXPENSES, null, exvalues);
+
+        }
+
+        eventID = db.update(TABLE_EVENTS, values, KEY_ID + " = ?",
+                new String[]{String.valueOf(event.getEventId())});
+
+        db.close();
+
+        return eventID;
 
     }
 
@@ -535,10 +625,33 @@ public class DBHelper extends SQLiteOpenHelper {
         db.delete(TABLE_EVENTS, KEY_ID + " = ?",
                 new String[]{String.valueOf(event.getEventId())});
 
-        //todo also delete mappings
+        db.delete(TABLE_EVENTS_TO_EXPENSES, KEY_EVENT_ID + " =?",
+                new String[]{String.valueOf(event.getEventId())});
+
         db.close();
     }
 
+
+    public ArrayList<Event> getEventsByExpense(Expense expense) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ArrayList<Event> events = new ArrayList<>();
+        int expenseID = expense.getId();
+
+        Cursor cursor = db.query(TABLE_EVENTS_TO_EXPENSES, null,
+                KEY_EXPENSE_ID + "=" +
+                        String.valueOf
+                                (expenseID), null, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Event event = fetchEvent(Integer.parseInt(cursor.getString(1)));
+                events.add(event);
+
+            } while (cursor.moveToNext());
+        }
+        return events;
+
+    }
 
 
 }
