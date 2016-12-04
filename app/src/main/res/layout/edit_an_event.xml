@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -38,7 +39,8 @@
             android:text="Medium Text"
             android:id="@+id/eventAmt"
             android:layout_above="@+id/eventAmount_text"
-            android:layout_alignEnd="@+id/generatePDF" />
+            android:layout_toEndOf="@+id/eventName"
+            android:layout_marginStart="32dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -70,14 +72,6 @@
             android:layout_below="@+id/limitAmt"
             android:layout_alignStart="@+id/limitAmt" />
 
-        <Button
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:text="Generate PDF Report"
-            android:id="@+id/generatePDF"
-            android:layout_below="@+id/limit_text"
-            android:layout_centerHorizontal="true" />
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -97,7 +91,39 @@
             android:layout_alignStart="@+id/expCount"
             android:layout_alignEnd="@+id/eventAmount_text" />
 
+
+
     </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/buttons_layout"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        >
+
+        <Button
+            android:id="@+id/curExps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Current Expenses"
+            android:textColor="#ffffff"
+            android:background="@drawable/buttonshape"
+            android:onClick="showCurExpenses">
+        </Button>
+
+        <Button
+            android:id="@+id/addExps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Add Expenses"
+            android:textColor="#ffffff"
+            android:background="@drawable/buttonshape"
+            android:onClick="addExpenses">
+        </Button>
+    </LinearLayout>
+
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/fragment_container2"

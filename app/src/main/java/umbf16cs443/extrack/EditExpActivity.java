@@ -38,7 +38,8 @@ import umbf16cs443.extrack.db.models.Expense;
  */
 
 //activity to prompt user enter new expense information
-public class EditExpActivity extends AppCompatActivity {
+public class EditExpActivity extends AppCompatActivity
+        implements DatePickerDialog.OnDateSetListener{
 
 
     ArrayAdapter<Category> adapter; // adapter for spinner
@@ -155,6 +156,11 @@ public class EditExpActivity extends AppCompatActivity {
                             .blank_amount_error , Toast.LENGTH_SHORT ).show();
                     return false;
                 }
+
+                exp.setExVendor(vendor.getText().toString());
+                exp.setExAmount(Double.valueOf(amount.getText().toString()));
+
+                db.updateExpense(exp);
 
                 finish();
                 break;
@@ -287,7 +293,7 @@ public class EditExpActivity extends AppCompatActivity {
 //end of currency*********************************************************************************
 
     //code for setting up DatePicker**************************************************************
-    public void pickDate2(View view) {
+    public void pickDate(View view) {
         DatePickerFragment dateFrag = new DatePickerFragment();
         dateFrag.show(getSupportFragmentManager(), "date");
     }

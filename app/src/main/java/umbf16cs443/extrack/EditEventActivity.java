@@ -2,6 +2,7 @@ package umbf16cs443.extrack;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -10,8 +11,12 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -33,8 +38,76 @@ public class EditEventActivity extends AppCompatActivity {
     int layout;
 
     ArrayList<Expense> expenses;
-    ArrayAdapter<Expense> exAdapter;
-    ListFragment expenseListFrag;
+    ArrayList<Expense> eventExpenses;
+
+    public Event getEvent(){
+        return event;
+    }
+
+    public ArrayList<Expense> getExpenses(){
+        return expenses;
+    }
+
+    public void addExpenses(View view){
+        //update the two main buttons colors
+        Button btn1 = (Button) findViewById(R.id.addExps);
+        btn1.setTextColor(Color.BLACK);
+        btn1.setBackgroundResource(R.drawable.pressedbuttonshape);
+
+        Button btn2 = (Button) findViewById(R.id.curExps);
+        btn2.setTextColor(Color.WHITE);
+        btn2.setBackgroundResource(R.drawable.buttonshape);
+
+        expenses = db.getAllExpenses();
+
+        //display a message if no expenses assigned
+        if (expenses != null) {
+            AddExpsFragment addExpsFragment = new AddExpsFragment();
+
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container2, addExpsFragment);
+            transaction.commit();
+        }
+
+        else{
+            HelpMsgFragment newFragment = new HelpMsgFragment();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container2, newFragment);
+            transaction.commit();
+        }
+    }
+
+    public void showCurExpenses(View view){
+        //update the two main buttons colors
+        Button btn1 = (Button) findViewById(R.id.curExps);
+        btn1.setTextColor(Color.BLACK);
+        btn1.setBackgroundResource(R.drawable.pressedbuttonshape);
+
+        Button btn2 = (Button) findViewById(R.id.addExps);
+        btn2.setTextColor(Color.WHITE);
+        btn2.setBackgroundResource(R.drawable.buttonshape);
+
+
+        eventExpenses = event.getExpenses();
+
+        //expenses = db.getAllExpenses();
+
+        //display a message if no expenses assigned
+        if (eventExpenses != null) {
+            EventExpsFragment eventExpsFragment = new EventExpsFragment();
+
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container2, eventExpsFragment);
+            transaction.commit();
+        }
+
+        else{
+            HelpMsgFragment newFragment = new HelpMsgFragment();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container2, newFragment);
+            transaction.commit();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,35 +136,16 @@ public class EditEventActivity extends AppCompatActivity {
 
 
         //*******************populate expenses belong to event in ListView*********************
+        //layout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
+          //      android.R.layout.simple_list_item_activated_1 : android.R.layout.simple_list_item_1;
+        showCurExpenses(null);
 
-        expenseListFrag = new ListFragment();
-        layout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
-                android.R.layout.simple_list_item_activated_1 : android.R.layout.simple_list_item_1;
-
-        expenses = event.getExpenses();
-
-        //display a message if no expenses assigned
-        if (expenses != null) {
-            exAdapter = new ArrayAdapter<Expense>(this, layout, expenses);
-            expenseListFrag.setListAdapter(exAdapter);
-
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.fragment_container2, expenseListFrag);
-            transaction.commit();
-        }
-
-        else{
-            HelpMsgFragment newFragment = new HelpMsgFragment();
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.fragment_container2, newFragment);
-            transaction.commit();
-        }
         //*************************************************************************************
     }
 
     //include save and delete button in menu bar
     public boolean onCreateOptionsMenu(Menu menu){
-        getMenuInflater().inflate(R.menu.edit_action_btns, menu);
+        getMenuInflater().inflate(R.menu.edit_event_menu_btns, menu);
         return true;
     }
 
@@ -101,13 +155,17 @@ public class EditEventActivity extends AppCompatActivity {
 
             //TODO user clicked on save to store updated Event object
             //return to activity showing all Events
-            case R.id.save:
+            case R.id.saveEvent:
                 finish();
+                break;
+
+            //TODO generate pdf
+            case R.id.pdf:
                 break;
 
             //user wants to deleted the selected Event object
             //prompt an alertdialog to confirm deletion
-            case R.id.delete:
+            case R.id.deleteEvent:
                 AlertDialog.Builder deleteDialog = new AlertDialog.Builder(this);
                 deleteDialog.setMessage("Delete event permanently?");
                 deleteDialog.setTitle("Delete Event");

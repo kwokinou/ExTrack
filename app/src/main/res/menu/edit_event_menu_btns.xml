@@ -1,0 +1,23 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <item
+        android:id="@+id/deleteEvent"
+        android:title="@string/action_delete"
+        android:icon="@drawable/ic_delete_black_24dp"
+        app:showAsAction="always"
+        />
+
+    <item
+        android:id="@+id/pdf"
+        android:title="PDF"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/saveEvent"
+        android:title="@string/action_save"
+        app:showAsAction="always"
+        />
+
+</menu>
