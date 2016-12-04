@@ -510,7 +510,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
-
     public ArrayList<Event> getAllEvents() {
 
         ArrayList<Event> eventList = new ArrayList<Event>();
@@ -543,7 +542,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
                 if (expenseCursor.moveToFirst()) {
                     do {
-
+chec
                         int expenseID = Integer.parseInt(expenseCursor.getString(2));
                         Expense nextExpense = fetchExpense(expenseID);
                         event.addExpense(nextExpense);
