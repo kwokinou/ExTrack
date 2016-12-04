@@ -44,13 +44,13 @@ public class EditExpActivity extends AppCompatActivity
 
     ArrayAdapter<Category> adapter; // adapter for spinner
     ArrayList<Category> catArray;   // categories array
+    ArrayList<Expense> expenses;
 
     // New Expense Variables
     Currency exCurrency;
     // threw this up here due to scope issues
     Currency tempCurrency;
 
-    Date exDate;
     String receiptString = null;
 
     // View Components for New Expense
@@ -59,21 +59,21 @@ public class EditExpActivity extends AppCompatActivity
     TextView currencyText;              // displays currency code
     TextView dateText;                  // displays date selected
     Spinner catSpinner;                 // select category
+    Date exDate;                        // select date
     Category exCat;                     // expense category
 
-    ArrayList<Expense> expenses;
     DBHelper db;
     Expense exp; //Expense to be edited
     int position;
 
     @Override
+    //TODO need to display previously saved receipt image
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_an_exp);
         setTitle("Edit an Expense");
         Intent mIntent = getIntent();
-        position = mIntent.getIntExtra("position", 0); //retrieve selected position
-
+        position = mIntent.getIntExtra("position", 0); //retrieve selected expense position
 
         db = new DBHelper(this);
         expenses = db.getAllExpenses();
@@ -85,28 +85,28 @@ public class EditExpActivity extends AppCompatActivity
 
         ((EditText) findViewById(R.id.amount)).setText(exp.getExAmount().toString());//display saved amount
 
-        //TODO display previously filled in expense date, category, and event
-        // Set New Expense Variables To Defaults
-        //exDate = calendar.getTime();
 
-        exDate = exp.getExDate();
-
+//set USD as default currency***************************************************************
         exCurrency = Currency.getInstance("USD");
         exCurrency = exp.getCurrency();
 
         // Identify views
         currencyText = (TextView) findViewById(R.id.currency_text);
-        dateText = (TextView) findViewById(R.id.date_text);
-
 
         // Set Currency Text
         currencyText.setText(exCurrency.toString());
-        // Date Formatter Variable
+//end of currency setting*******************************************************************
+
+//dislay previously selected date**********************************************************
+        exDate = exp.getExDate();
+        dateText = (TextView) findViewById(R.id.date_text);
+
+        // Date Formatter Variable.  Display previoiusly selected Date
         SimpleDateFormat simpleDate = new SimpleDateFormat("MM/dd/yyyy");
         dateText.setText(simpleDate.format(exDate));
+//****************************************************************************************
 
-
-        //set up spinner for category selection
+//set up spinner for category selection**********************************************************
         catSpinner = (Spinner) findViewById(R.id.spinner1);
         //category_names is defined in strings xml as an example to populate spinner adapter
         adapter = new ArrayAdapter<Category>(this, android.R.layout
@@ -114,6 +114,10 @@ public class EditExpActivity extends AppCompatActivity
                 catArray);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         catSpinner.setAdapter(adapter);
+
+        //Display previously selected Category in spinner first
+        catSpinner.setSelection(exp.getExCategory().getId()-1);
+
         catSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -124,7 +128,7 @@ public class EditExpActivity extends AppCompatActivity
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-
+//end of spinner for category*******************************************************************
     }
 
     //include save button in menu bar
@@ -141,7 +145,7 @@ public class EditExpActivity extends AppCompatActivity
             //return to activity showing all Expenses
             case R.id.save:
 
-                //TODO NEED TO UPDATE DATE, CATEGORY AND EVENT
+                //TODO NEED TO UPDATE RECEIPT IMAGE
                 vendor = (EditText) findViewById(R.id.vendor);
                 amount = (EditText) findViewById(R.id.amount);
 
@@ -157,10 +161,15 @@ public class EditExpActivity extends AppCompatActivity
                     return false;
                 }
 
+                //update selected exp's attributes
+                int id = exp.getId();
                 exp.setExVendor(vendor.getText().toString());
                 exp.setExAmount(Double.valueOf(amount.getText().toString()));
+                exp.setExDate(exDate);
+                exp.setExCategory(exCat);
 
                 db.updateExpense(exp);
+                exp = db.fetchExpense(id);//overwrite current exp with new data
 
                 finish();
                 break;
