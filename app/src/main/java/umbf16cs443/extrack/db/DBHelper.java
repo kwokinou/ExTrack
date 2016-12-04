@@ -542,7 +542,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
                 if (expenseCursor.moveToFirst()) {
                     do {
-chec
+
                         int expenseID = Integer.parseInt(expenseCursor.getString(2));
                         Expense nextExpense = fetchExpense(expenseID);
                         event.addExpense(nextExpense);
@@ -582,9 +582,13 @@ chec
         // set event values
         values.put(KEY_EVENT_NAME, event.getEventName());
         values.put(KEY_EVENT_LIMIT, event.getLimit());
-        values.put(KEY_EVENT_START_DATE, event.getStartDate().getTime());
-        values.put(KEY_EVENT_END_DATE, event.getEndDate().getTime());
-
+        if (event.getStartDate() != null) {
+            values.put(KEY_EVENT_START_DATE, event.getStartDate().getTime());
+        }
+        if (event.getEndDate() != null) {
+            values.put(KEY_EVENT_END_DATE, event.getEndDate().getTime());
+        }
+        
         calendar = Calendar.getInstance();
         currentTime = calendar.getTime();
 
