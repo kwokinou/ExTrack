@@ -24,11 +24,22 @@ public class EventExpsFragment extends ListFragment {
     Event curEvent;
     ArrayList<Expense> expenses;
     ArrayAdapter<Expense> expAdapter;
+    DBHelper db;
+
+    public void updateView(){
+
+        expenses = curEvent.getExpenses();
+        expAdapter = new ArrayAdapter<Expense>(getActivity(), layout, expenses);
+        setListAdapter(expAdapter);
+    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
+        db = ((EditEventActivity) getActivity()).getDb();
         curEvent = ((EditEventActivity) getActivity()).getEvent();
         //expenses = curEvent.getExpenses();
         //expenses = ((EditEventActivity) getActivity()).getExpenses();
@@ -53,6 +64,8 @@ public class EventExpsFragment extends ListFragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 curEvent.deleteExpense(e);
+                updateView();
+                db.updateEvent(curEvent);
             }
         });
         deleteDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {

@@ -49,6 +49,10 @@ public class EditEventActivity extends AppCompatActivity {
         return expenses;
     }
 
+    public DBHelper getDb(){
+        return db;
+    }
+
     public void addExpenses(View view){
         //update the two main buttons colors
         Button btn1 = (Button) findViewById(R.id.addExps);
@@ -130,7 +134,7 @@ public class EditEventActivity extends AppCompatActivity {
        // if (event.getExpenses() == null)
          //   ((TextView) findViewById(R.id.expCount)).setText(String.valueOf(0));
        // else
-            ((TextView) findViewById(R.id.expCount)).setText(String.valueOf(event.getExpenses().size()));
+         //   ((TextView) findViewById(R.id.expCount)).setText(String.valueOf(event.getExpenses().size()));
 
         //display event total dollar amount
         ((TextView) findViewById(R.id.eventAmt)).setText(String.valueOf(event.getEventTotal()));
