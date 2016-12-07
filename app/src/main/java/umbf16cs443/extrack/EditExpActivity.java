@@ -116,8 +116,10 @@ public class EditExpActivity extends AppCompatActivity
         catSpinner.setAdapter(adapter);
 
         //Display previously selected Category in spinner first
-        catSpinner.setSelection(exp.getExCategory().getId()-1);
+        if(exp.getExCategory() != null) {
 
+        catSpinner.setSelection(exp.getExCategory().getId() - 1);
+        }
         catSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {

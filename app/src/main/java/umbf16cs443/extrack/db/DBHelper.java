@@ -35,7 +35,7 @@ public class DBHelper extends SQLiteOpenHelper {
     Date currentTime;
 
     // Database Version
-    private static final int DATABASE_VERSION = 10;
+    private static final int DATABASE_VERSION = 11;
     // Database Name
     private static final String DATABASE_NAME = "exTrackDB";
     // Table Names
@@ -204,6 +204,11 @@ public class DBHelper extends SQLiteOpenHelper {
                 categoryList.add(category);
             } while (cursor.moveToNext());
         }
+        else{
+            Category none = new Category("None");
+            addCategory(none);
+            getAllCategories();
+        }
 
         return categoryList;
 
@@ -242,6 +247,11 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public void deleteCategory(Category category) {
+        if(category.getCatName().equals("None")){
+            return;
+        }
+
+
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_CATEGORIES, KEY_ID + " = ?",
                 new String[]{String.valueOf(category.getId())});
