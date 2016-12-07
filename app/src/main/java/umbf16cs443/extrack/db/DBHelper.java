@@ -35,7 +35,7 @@ public class DBHelper extends SQLiteOpenHelper {
     Date currentTime;
 
     // Database Version
-    private static final int DATABASE_VERSION = 9;
+    private static final int DATABASE_VERSION = 10;
     // Database Name
     private static final String DATABASE_NAME = "exTrackDB";
     // Table Names
@@ -465,6 +465,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public Event fetchEvent(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
+        ArrayList<Expense> expenses = new ArrayList<Expense>();
 
         Cursor cursor = db.query(TABLE_EVENTS, null,
                 KEY_ID + "=?",
@@ -475,7 +476,7 @@ public class DBHelper extends SQLiteOpenHelper {
         Event event = new Event(
                 Integer.parseInt(cursor.getString(0)),   // id
                 cursor.getString(1),                     // name
-                null,                                    // expenses
+                expenses,                                // expenses
                 Long.parseLong(cursor.getString(2)),     // limit
                 Long.parseLong(cursor.getString(3)),     // start date
                 Long.parseLong(cursor.getString(4))      // end date
@@ -515,6 +516,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public ArrayList<Event> getAllEvents() {
 
         ArrayList<Event> eventList = new ArrayList<Event>();
+        ArrayList<Expense> expenses = new ArrayList<Expense>();
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_EVENTS;
 
@@ -529,7 +531,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 Event event = new Event(
                         Integer.parseInt(cursor.getString(0)),   // id
                         cursor.getString(1),                     // name
-                        null,                                    // expenses
+                        expenses,                                    // expenses
                         Long.parseLong(cursor.getString(2)),     // limit
                         Long.parseLong(cursor.getString(3)),     // start date
                         Long.parseLong(cursor.getString(4))      // end date
