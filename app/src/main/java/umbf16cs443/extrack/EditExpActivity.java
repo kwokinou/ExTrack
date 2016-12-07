@@ -3,6 +3,7 @@ package umbf16cs443.extrack;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
@@ -18,6 +19,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.security.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -25,6 +27,7 @@ import java.util.Calendar;
 import java.util.Currency;
 import java.util.Date;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import umbf16cs443.extrack.db.DBHelper;
 import umbf16cs443.extrack.db.models.Category;
@@ -35,19 +38,19 @@ import umbf16cs443.extrack.db.models.Expense;
  */
 
 //activity to prompt user enter new expense information
-public class AddExpActivity extends AppCompatActivity
-        implements DatePickerDialog.OnDateSetListener {
+public class EditExpActivity extends AppCompatActivity
+        implements DatePickerDialog.OnDateSetListener{
 
 
     ArrayAdapter<Category> adapter; // adapter for spinner
     ArrayList<Category> catArray;   // categories array
+    ArrayList<Expense> expenses;
 
     // New Expense Variables
     Currency exCurrency;
     // threw this up here due to scope issues
     Currency tempCurrency;
 
-    Date exDate;
     String receiptString = null;
 
     // View Components for New Expense
@@ -56,38 +59,54 @@ public class AddExpActivity extends AppCompatActivity
     TextView currencyText;              // displays currency code
     TextView dateText;                  // displays date selected
     Spinner catSpinner;                 // select category
+    Date exDate;                        // select date
     Category exCat;                     // expense category
+
     DBHelper db;
+    Expense exp; //Expense to be edited
+    int position;
 
     @Override
+    //TODO need to display previously saved receipt image
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_an_exp);
-        setTitle("Add an Expense");
+        setTitle("Edit an Expense");
+        Intent mIntent = getIntent();
+        position = mIntent.getIntExtra("position", 0); //retrieve selected expense position
 
-        db = new DBHelper(getApplicationContext());
+        db = new DBHelper(this);
+        expenses = db.getAllExpenses();
+        exp = expenses.get(position);
         catArray = db.getAllCategories();
         Calendar calendar = Calendar.getInstance();
 
+        ((EditText) findViewById(R.id.vendor)).setText(exp.getExVendor());//display saved vendor name
 
-        // Set New Expense Variables To Defaults
-        exDate = calendar.getTime();
+        ((EditText) findViewById(R.id.amount)).setText(exp.getExAmount().toString());//display saved amount
+
+
+//set USD as default currency***************************************************************
         exCurrency = Currency.getInstance("USD");
+        exCurrency = exp.getCurrency();
 
         // Identify views
-        vendor = (EditText) findViewById(R.id.vendor);
-        amount = (EditText) findViewById(R.id.amount);
         currencyText = (TextView) findViewById(R.id.currency_text);
-        dateText = (TextView) findViewById(R.id.date_text);
-
 
         // Set Currency Text
         currencyText.setText(exCurrency.toString());
-        // Date Formatter Variable
+//end of currency setting*******************************************************************
+
+//dislay previously selected date**********************************************************
+        exDate = exp.getExDate();
+        dateText = (TextView) findViewById(R.id.date_text);
+
+        // Date Formatter Variable.  Display previoiusly selected Date
         SimpleDateFormat simpleDate = new SimpleDateFormat("MM/dd/yyyy");
         dateText.setText(simpleDate.format(exDate));
+//****************************************************************************************
 
-        //set up spinner for category selection
+//set up spinner for category selection**********************************************************
         catSpinner = (Spinner) findViewById(R.id.spinner1);
         //category_names is defined in strings xml as an example to populate spinner adapter
         adapter = new ArrayAdapter<Category>(this, android.R.layout
@@ -95,6 +114,12 @@ public class AddExpActivity extends AppCompatActivity
                 catArray);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         catSpinner.setAdapter(adapter);
+
+        //Display previously selected Category in spinner first
+        if(exp.getExCategory() != null) {
+
+        catSpinner.setSelection(exp.getExCategory().getId() - 1);
+        }
         catSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -105,12 +130,12 @@ public class AddExpActivity extends AppCompatActivity
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-
+//end of spinner for category*******************************************************************
     }
 
     //include save button in menu bar
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.save_action_btn, menu);
+        getMenuInflater().inflate(R.menu.edit_action_btns, menu);
         return true;
     }
 
@@ -118,9 +143,13 @@ public class AddExpActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
 
-            //user clicked on save to store Expense object
+            //user clicked on save to store edited Expense object
             //return to activity showing all Expenses
             case R.id.save:
+
+                //TODO NEED TO UPDATE RECEIPT IMAGE
+                vendor = (EditText) findViewById(R.id.vendor);
+                amount = (EditText) findViewById(R.id.amount);
 
                 if(vendor.getText().toString().equals("")){
                     Toast.makeText(getApplicationContext(),R.string
@@ -134,17 +163,41 @@ public class AddExpActivity extends AppCompatActivity
                     return false;
                 }
 
-                Expense expense = new Expense(
-                        vendor.getText().toString(),        //vendor
-                        exCurrency,                               //currency
-                        Double.parseDouble(amount.getText().toString()), //amount
-                        receiptString, //receipt
-                        exDate, // date
-                        exCat); //category
+                //update selected exp's attributes
+                int id = exp.getId();
+                exp.setExVendor(vendor.getText().toString());
+                exp.setExAmount(Double.valueOf(amount.getText().toString()));
+                exp.setExDate(exDate);
+                exp.setExCategory(exCat);
 
-                db.addExpense(expense);
+                db.updateExpense(exp);
+                exp = db.fetchExpense(id);//overwrite current exp with new data
+
                 finish();
                 break;
+
+            //user wants to delete the selected Expense object
+            //display alertdialog to confirm deletion
+            case R.id.delete:
+                AlertDialog.Builder deleteDialog = new AlertDialog.Builder(this);
+                deleteDialog.setMessage("Delete expense permanently?");
+                deleteDialog.setTitle("Delete Expense");
+
+                deleteDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        db.deleteExpense(exp);//delete Expense from database
+                        finish();
+                    }
+                });
+                deleteDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+                deleteDialog.show();
+                break;
+
 
             default:
                 return super.onOptionsItemSelected(item);
@@ -156,7 +209,7 @@ public class AddExpActivity extends AppCompatActivity
     //user clicked on add category to create a new category*******************************
     public void addCategory(View view) {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        final EditText edittext = new EditText(AddExpActivity.this);
+        final EditText edittext = new EditText(EditExpActivity.this);
 
         alert.setMessage("Enter Category Name");
         alert.setTitle("Add Category");
@@ -180,9 +233,7 @@ public class AddExpActivity extends AppCompatActivity
                     adapter.setDropDownViewResource(android.R.layout
                             .simple_spinner_dropdown_item);
                     catSpinner.setAdapter(adapter);
-
                 }
-
             }
         });
 
@@ -192,17 +243,16 @@ public class AddExpActivity extends AppCompatActivity
             }
         });
         alert.show();
-
-
     }
 //end of addCategory**************************************************************************
 
     // add currency***************************************************************************
+
     public void setCurrency(View view) {
 
         tempCurrency = exCurrency;
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        final Spinner currencySpinner = new Spinner(AddExpActivity.this);
+        final Spinner currencySpinner = new Spinner(EditExpActivity.this);
 
         alert.setMessage("Select the currency that corresponds to this " +
                 "expense.");
@@ -216,7 +266,6 @@ public class AddExpActivity extends AppCompatActivity
         ArrayAdapter<Currency> currencyAdapter = new ArrayAdapter<Currency>
                 (getApplicationContext(), android.R.layout
                         .simple_spinner_item, currencies);
-
 
         currencyAdapter.setDropDownViewResource(android.R.layout
                 .simple_spinner_dropdown_item);
@@ -252,8 +301,7 @@ public class AddExpActivity extends AppCompatActivity
         });
         alert.show();
     }
-//end of currency setting*************************************************************************
-
+//end of currency*********************************************************************************
 
     //code for setting up DatePicker**************************************************************
     public void pickDate(View view) {

@@ -35,7 +35,7 @@ public class DBHelper extends SQLiteOpenHelper {
     Date currentTime;
 
     // Database Version
-    private static final int DATABASE_VERSION = 9;
+    private static final int DATABASE_VERSION = 11;
     // Database Name
     private static final String DATABASE_NAME = "exTrackDB";
     // Table Names
@@ -204,6 +204,11 @@ public class DBHelper extends SQLiteOpenHelper {
                 categoryList.add(category);
             } while (cursor.moveToNext());
         }
+        else{
+            Category none = new Category("None");
+            addCategory(none);
+            getAllCategories();
+        }
 
         return categoryList;
 
@@ -242,6 +247,11 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public void deleteCategory(Category category) {
+        if(category.getCatName().equals("None")){
+            return;
+        }
+
+
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_CATEGORIES, KEY_ID + " = ?",
                 new String[]{String.valueOf(category.getId())});
@@ -446,16 +456,17 @@ public class DBHelper extends SQLiteOpenHelper {
 
         if (event.getExpenses() != null) {
 
-            ContentValues exvalues = new ContentValues();
 
             ArrayList<Expense> eventExpenses = event.getExpenses();
 
             for (Expense e : eventExpenses) {
+                ContentValues exvalues = new ContentValues();
                 exvalues.put(KEY_EVENT_ID, eventID);
                 exvalues.put(KEY_EXPENSE_ID, e.getId());
+                db.insert(TABLE_EVENTS_TO_EXPENSES, null, exvalues);
+
             }
 
-            db.insert(TABLE_EVENTS_TO_EXPENSES, null, exvalues);
 
             // todo add events to mapping database
             db.close();
@@ -464,6 +475,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public Event fetchEvent(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
+        ArrayList<Expense> expenses = new ArrayList<Expense>();
 
         Cursor cursor = db.query(TABLE_EVENTS, null,
                 KEY_ID + "=?",
@@ -474,7 +486,7 @@ public class DBHelper extends SQLiteOpenHelper {
         Event event = new Event(
                 Integer.parseInt(cursor.getString(0)),   // id
                 cursor.getString(1),                     // name
-                null,                                    // expenses
+                expenses,                                // expenses
                 Long.parseLong(cursor.getString(2)),     // limit
                 Long.parseLong(cursor.getString(3)),     // start date
                 Long.parseLong(cursor.getString(4))      // end date
@@ -514,6 +526,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public ArrayList<Event> getAllEvents() {
 
         ArrayList<Event> eventList = new ArrayList<Event>();
+        ArrayList<Expense> expenses = new ArrayList<Expense>();
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_EVENTS;
 
@@ -528,7 +541,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 Event event = new Event(
                         Integer.parseInt(cursor.getString(0)),   // id
                         cursor.getString(1),                     // name
-                        null,                                    // expenses
+                        expenses,                                    // expenses
                         Long.parseLong(cursor.getString(2)),     // limit
                         Long.parseLong(cursor.getString(3)),     // start date
                         Long.parseLong(cursor.getString(4))      // end date
@@ -583,8 +596,12 @@ public class DBHelper extends SQLiteOpenHelper {
         // set event values
         values.put(KEY_EVENT_NAME, event.getEventName());
         values.put(KEY_EVENT_LIMIT, event.getLimit());
-        values.put(KEY_EVENT_START_DATE, event.getStartDate().getTime());
-        values.put(KEY_EVENT_END_DATE, event.getEndDate().getTime());
+        if (event.getStartDate() != null) {
+            values.put(KEY_EVENT_START_DATE, event.getStartDate().getTime());
+        }
+        if (event.getEndDate() != null) {
+            values.put(KEY_EVENT_END_DATE, event.getEndDate().getTime());
+        }
 
         calendar = Calendar.getInstance();
         currentTime = calendar.getTime();

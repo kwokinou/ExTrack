@@ -4,16 +4,15 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 /**
- * Created by kwokin on 10/30/2016.
+ * Created by kwokin on 11/26/2016.
  */
+public class SettingActivity extends AppCompatActivity {
 
-//activity for user to enter new expense information
-public class SearchExpActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.search_activity);
-        setTitle("Search Expenses");
+        setContentView(R.layout.setting_activity);
+        setTitle("Setting");
     }
 
 }

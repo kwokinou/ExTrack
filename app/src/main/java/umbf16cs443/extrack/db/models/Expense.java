@@ -129,7 +129,9 @@ public class Expense {
         this.exDateStamp = exDateStamp;
 
         this.exCategory = category;
-        this.exDateStamp = exDate.getTime();
+
+        this.exDate = new Date(exDateStamp);
+
 
     }
 
@@ -280,7 +282,3 @@ public class Expense {
     }
 
 }
-
-
-
-
