@@ -1,34 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:weightSum="1">
 
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/date_text"
+        android:layout_below="@+id/amount"
+        android:layout_marginTop="17dp"
+        android:layout_alignEnd="@+id/amount"
+        android:layout_toEndOf="@+id/transDate"/>
+
     <EditText
-        android:layout_width="310dp"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:id="@+id/vendor"
         android:hint="@string/vendor_name" />
 
-    <EditText
-        android:layout_width="219dp"
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/expType"
-        android:hint="@string/exp_type" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_below="@id/vendor"
+        android:id="@+id/transDate" />
 
-    <EditText
-        android:layout_width="270dp"
-        android:layout_height="wrap_content"
-        android:inputType="date"
-        android:ems="10"
-        android:id="@+id/transDate"
-        android:hint="@string/trans_date" />
-
-    <EditText
-        android:layout_width="197dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/currency"
-        android:hint="@string/currency" />
 
     <EditText
         android:layout_width="188dp"
@@ -36,7 +35,65 @@
         android:inputType="numberDecimal"
         android:ems="10"
         android:id="@+id/amount"
-        android:hint="@string/amount" />
+        android:hint="@string/amount"
+        android:layout_below="@+id/vendor"
+        android:layout_toEndOf="@+id/transDate"/>
+
+    <Button
+        android:id="@+id/picDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/select_date"
+        android:onClick="pickDate"
+        android:layout_alignTop="@+id/date_text"
+        android:layout_alignStart="@+id/add_category1"/>
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/picDate"
+        android:id="@+id/currency_text"
+        android:layout_alignEnd="@+id/date_text"
+        android:layout_alignParentStart="true"/>
+
+    <Button
+        android:text="Set Currency"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/currency_text"
+        android:layout_alignStart="@+id/picDate"
+        android:id="@+id/set_currency"
+        android:layout_alignEnd="@+id/picDate"
+        android:onClick="setCurrency"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Category"
+        android:id="@+id/add_category1"
+        android:onClick="addCategory"
+        android:layout_marginEnd="20dp"
+        android:layout_alignTop="@+id/spinner_view1"
+        android:layout_alignParentEnd="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/spinner_view1"
+        android:text="@string/select_category"
+        android:layout_below="@+id/currency_text"
+        android:layout_toEndOf="@+id/transDate"
+        android:layout_marginTop="41dp"/>
+
+    <Spinner
+        android:id="@+id/spinner1"
+        android:layout_width="188dp"
+        android:layout_height="40dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/spinner_view1"/>
 
     <Button
         android:layout_width="wrap_content"
@@ -45,6 +102,19 @@
         android:shadowDx="0"
         android:shadowDy="0"
         android:shadowRadius="0"
-        android:id="@+id/attReceipt" />
+        android:id="@+id/attReceipt1"
+        android:layout_alignTop="@+id/imageButton1"
+        android:layout_alignStart="@+id/add_category1" />
 
-</LinearLayout>
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@mipmap/ic_launcher"
+        android:id="@+id/imageButton1"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="53dp"
+        android:layout_alignEnd="@+id/spinner1"
+        android:layout_below="@+id/spinner1" />
+
+</RelativeLayout>

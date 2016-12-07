@@ -1,11 +1,8 @@
 package umbf16cs443.extrack;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.icu.util.Currency;
-import android.icu.util.ULocale;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -21,39 +18,41 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 import umbf16cs443.extrack.db.DBHelper;
+import umbf16cs443.extrack.db.models.Event;
 import umbf16cs443.extrack.db.models.Expense;
 
 
 /**
  * Created by kwokin on 10/23/2016.
  */
-@android.support.annotation.RequiresApi(api = Build.VERSION_CODES.N)
-public class ViewExpFragment extends ListFragment {
-    OnExpSelectedListener mCallback;
+public class ViewEventFragment extends ListFragment {
 
-    Date currentDate = new Date();
+    OnEventSelectedListener mCallback;
+
     DBHelper db;
     int layout;
-    ArrayList<Expense> expenses;
-    ArrayAdapter<Expense> exAdapter;
+    ArrayAdapter<Event> evAdapter;
+
+    //sample event list
+    ArrayList<Event> events;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true); //show action bar buttons
 
-        //set up list layout
+        db = new DBHelper(getContext());
+        events = db.getAllEvents();
+
+        //list layout for list view
         layout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
                 android.R.layout.simple_list_item_activated_1 : android.R.layout.simple_list_item_1;
 
-        db = new DBHelper(getContext());
-        expenses = db.getAllExpenses();
-
-        exAdapter = new ArrayAdapter<Expense>(getActivity(), layout, expenses);
-        setListAdapter(exAdapter);
+        evAdapter = new ArrayAdapter<Event>(getActivity(), layout, events);
+        setListAdapter(evAdapter);
     }
 
     //action menu buttons
@@ -62,24 +61,25 @@ public class ViewExpFragment extends ListFragment {
         super.onCreateOptionsMenu(menu,inflater);
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
 
-            //user clicked on add an expense action button
-            //switch to new activity to get user input for new expense
+            //user clicked on add an event action button
+            //switch to new activity to get user input for new event
             case R.id.add:
-                Intent i = new Intent(getActivity(), AddExpActivity.class);
+                Intent i = new Intent(getActivity(), AddEventActivity.class);
                 startActivity(i);
                 break;
 
-            //user clicked on search an expense action button
-            //alertdialog to get user input for search expenses
+            //user clicked on search an event action button
+            //alertdialog to get user input for search events
             case R.id.search:
                 AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
                 final EditText edittext = new EditText(getActivity());
 
-                alert.setTitle("Enter Vendor Name");
+                alert.setTitle("Enter Event Name");
                 alert.setView(edittext);
 
                 alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -88,16 +88,16 @@ public class ViewExpFragment extends ListFragment {
                         String YouEditTextValue = edittext.getText().toString();
                         int i;
                         if(YouEditTextValue.length() > 0){
-                            for (i = 0; i < expenses.size(); i++){
-                                String vendor = expenses.get(i).getExVendor();
-                                if (YouEditTextValue.equalsIgnoreCase(vendor)){
-                                    Intent intent = new Intent(getActivity(), EditExpActivity.class);
-                                    intent.putExtra("position", i);//EditExpActivity needs position
+                            for (i = 0; i < events.size(); i++){
+                                String eventName = events.get(i).getEventName();
+                                if (YouEditTextValue.equalsIgnoreCase(eventName)){
+                                    Intent intent = new Intent(getActivity(), EditEventActivity.class);
+                                    intent.putExtra("position", i);//EditEventActivity needs position
                                     startActivity(intent);
                                     break;
                                 }
                             }
-                            if(i == expenses.size())
+                            if(i == events.size())
                                 Toast.makeText(getActivity().getBaseContext(), "No Matching Value Found", Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -122,19 +122,18 @@ public class ViewExpFragment extends ListFragment {
         return true;
     }
 
-    //update Expense ListView
-    public void updateExpListView(){
-
-        expenses = db.getAllExpenses();
-        exAdapter = new ArrayAdapter<Expense>(getActivity(), layout, expenses);
-        setListAdapter(exAdapter);
+    //refresh event list view
+    public void updateEventListView(){
+        events = db.getAllEvents();
+        evAdapter = new ArrayAdapter<Event>(getActivity(), layout, events);
+        setListAdapter(evAdapter);
     }
 
-    //*****************************Edit an Expense by selecting it in the ListView******************
-    //enables mainactivity to update when user selects an Expense fromm Expense listView
-    //when users selects an Expense, display new activity for user to edit that Expense's information
-    public interface OnExpSelectedListener{
-        public void onExpSelected(int position);
+    //*****************************Edit an Event by selecting it in the ListView*********************
+    //enables mainactivity to update when user selects an Event fromm Event listView
+    //when users selects an Event, display new activity for user to edit that Event's information
+    public interface OnEventSelectedListener{
+        public void onEventSelected(int position);
     }
 
     @Override
@@ -144,18 +143,18 @@ public class ViewExpFragment extends ListFragment {
         // This makes sure that the container activity has implemented
         // the callback interface. If not, it throws an exception.
         try {
-            mCallback = (OnExpSelectedListener) activity;
+            mCallback = (OnEventSelectedListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement OnExpSelectedListener");
+                    + " must implement OnEventSelectedListener");
         }
     }
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         // Notify the parent activity of selected item
-        mCallback.onExpSelected(position);
+        mCallback.onEventSelected(position);
     }
-//***************end of edit Expense**************************************************************
+//***************end of edit Event**************************************************************
 
 }

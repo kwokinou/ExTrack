@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="2dp"
-    android:textSize="30sp"
-    android:text="Please select an option"
+    android:text="Please Add Expenses to Event"
+    android:textSize="20sp"
     android:textColor="#55000000"
-    android:gravity="center" />
+    android:gravity="center"
+    android:layout_centerVertical="true"/>

@@ -15,6 +15,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".AddExpActivity"/>
+        <activity android:name=".AddEventActivity"/>
+        <activity android:name=".EditExpActivity"/>
+        <activity android:name=".EditEventActivity"/>
+        <activity android:name=".SettingActivity"/>
     </application>
 
 </manifest>
