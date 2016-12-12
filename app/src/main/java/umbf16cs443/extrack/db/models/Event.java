@@ -34,7 +34,6 @@ public class Event {
         this.calcTotal();
 
 
-
     }
 
     // No ID Constructor - Date long
@@ -173,14 +172,39 @@ public class Event {
         this.expenses = expenses;
     }
 
-    public void addExpense(Expense expense) {
+
+    // codes for toast
+
+    // 0 - added successfully
+    // 1 - expense is after end date
+    // 2 - event is before start date
+    // 3 - no date on expense
+
+    public int addExpense(Expense expense) {
         if (expenses == null) {
             expenses = new ArrayList<Expense>();
+        }
+        if (this.endDate != null) {
+            if (expense.getExDate() == null) {
+                return 3;
+            }
+            if (expense.getExDate().after(this.endDate)) {
+                return 1;
+            }
+
+        }
+        if (this.startDate != null) {
+            if (expense.getExDate() == null) {
+                return 3;
+            }
+            if (expense.getExDate().before(this.startDate)) {
+                return 2;
+            }
         }
 
         expenses.add(expense);
         this.calcTotal();
-
+        return 0;
     }
 
     // by index

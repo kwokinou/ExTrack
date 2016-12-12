@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import umbf16cs443.extrack.db.DBHelper;
 import umbf16cs443.extrack.db.models.Event;
@@ -38,16 +39,32 @@ public class EditEventActivity extends AppCompatActivity {
     Event event;
     int layout;
 
-    ArrayList<Expense> expenses;
-    ArrayList<Expense> eventExpenses;
+
+    ArrayList<Expense> a = new ArrayList<>();
+
+
+
+    ArrayList<Expense> allExpenses;
+    ArrayList<Expense> newExpenses;
+  //  ArrayList<Expense> unAddedExpenses;
+    ArrayList<Expense> curExpenses;
+
 
     public Event getEvent(){
         return event;
     }
 
-    public ArrayList<Expense> getExpenses(){
-        return expenses;
+    public ArrayList<Expense> getAllExpenses(){
+        return allExpenses;
     }
+
+    //public ArrayList<Expense> getUnAddedExpenses(){
+      //  return unAddedExpenses;
+    //}
+
+    public ArrayList<Expense> getNewExpenses() {return newExpenses;}
+
+    //public ArrayList<Expense> getNewEventExpenses() {return newEventExpenses;}
 
     public DBHelper getDb(){
         return db;
@@ -63,23 +80,13 @@ public class EditEventActivity extends AppCompatActivity {
         btn2.setTextColor(Color.WHITE);
         btn2.setBackgroundResource(R.drawable.buttonshape);
 
-        expenses = db.getAllExpenses();
 
-        //display a message if no expenses assigned
-        if (expenses != null) {
-            AddExpsFragment addExpsFragment = new AddExpsFragment();
+        AddExpsFragment addExpsFragment = new AddExpsFragment();
 
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.fragment_container2, addExpsFragment);
-            transaction.commit();
-        }
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container2, addExpsFragment);
+        transaction.commit();
 
-        else{
-            HelpMsgFragment newFragment = new HelpMsgFragment();
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.fragment_container2, newFragment);
-            transaction.commit();
-        }
     }
 
     public void showCurExpenses(View view){
@@ -93,12 +100,7 @@ public class EditEventActivity extends AppCompatActivity {
         btn2.setBackgroundResource(R.drawable.buttonshape);
 
 
-        eventExpenses = event.getExpenses();
-
-        //expenses = db.getAllExpenses();
-
-        //display a message if no expenses assigned
-        if (eventExpenses != null) {
+        if(newExpenses.size() > 0){
             EventExpsFragment eventExpsFragment = new EventExpsFragment();
 
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -127,14 +129,29 @@ public class EditEventActivity extends AppCompatActivity {
         events = db.getAllEvents();
         event = events.get(position);
 
+        allExpenses = db.getAllExpenses();
+        curExpenses = event.getExpenses();
+      //  Toast.makeText(getApplicationContext(), String.valueOf(curExpenses.size()), Toast.LENGTH_LONG).show();
+
+
+    //    eventExpenses = new ArrayList<>();
+        newExpenses = new ArrayList<>();
+      //  unAddedExpenses = new ArrayList<>();
+        //newExpenses.clear();
+       // unAddedExpenses.clear();
+
+        Iterator<Expense> itr = curExpenses.iterator();
+
+        while(itr.hasNext()) {
+            newExpenses.add(itr.next());
+           // Toast.makeText(getApplicationContext(), event.getExpenses().get(1).getExVendor(), Toast.LENGTH_LONG).show();
+        }
+
         ((EditText) findViewById(R.id.eventName)).setText(event.getEventName()); //prefill event name
         ((EditText) findViewById(R.id.limitAmt)).setText(String.valueOf(event.getLimit())); //prefill limit
 
-        //display expense count for selected event
-       // if (event.getExpenses() == null)
-         //   ((TextView) findViewById(R.id.expCount)).setText(String.valueOf(0));
-       // else
-         //   ((TextView) findViewById(R.id.expCount)).setText(String.valueOf(event.getExpenses().size()));
+        //prefill expense count
+        ((TextView) findViewById(R.id.expCount)).setText(String.valueOf(event.getExpenses().size()));
 
         //display event total dollar amount
         ((TextView) findViewById(R.id.eventAmt)).setText(String.valueOf(event.getEventTotal()));
@@ -162,7 +179,13 @@ public class EditEventActivity extends AppCompatActivity {
                 event.setEventName(((EditText)findViewById(R.id.eventName)).getText().toString());
                 event.setLimit(Long.valueOf(((EditText)findViewById(R.id.limitAmt)).getText().toString()));
 
+                //int id = event.getEventId();
+                event.setExpenses(newExpenses);
+
                 db.updateEvent(event);
+                //event = db.fetchEvent(id);
+
+//Toast.makeText(getApplicationContext(), event.getExpenses().get(0).getExVendor() + event.getExpenses().get(1).getExVendor(), Toast.LENGTH_LONG).show();
 
                 finish();
                 break;

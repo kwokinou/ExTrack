@@ -12,6 +12,7 @@
     <item
         android:id="@+id/pdf"
         android:title="PDF"
+        android:icon="@drawable/ic_get_app_black_24dp"
         app:showAsAction="always"/>
 
     <item
