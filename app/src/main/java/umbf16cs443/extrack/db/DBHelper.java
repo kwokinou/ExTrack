@@ -19,6 +19,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Hashtable;
 import java.util.List;
 
 //This method is pretty massive and could probably be broken up into sub-methods
@@ -203,8 +204,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 category.setCatName(cursor.getString(1));
                 categoryList.add(category);
             } while (cursor.moveToNext());
-        }
-        else{
+        } else {
             Category none = new Category("None");
             addCategory(none);
             getAllCategories();
@@ -247,7 +247,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public void deleteCategory(Category category) {
-        if(category.getCatName().equals("None")){
+        if (category.getCatName().equals("None")) {
             return;
         }
 
@@ -622,9 +622,10 @@ public class DBHelper extends SQLiteOpenHelper {
             for (Expense e : eventExpenses) {
                 exvalues.put(KEY_EVENT_ID, eventID);
                 exvalues.put(KEY_EXPENSE_ID, e.getId());
+                db.insert(TABLE_EVENTS_TO_EXPENSES, null, exvalues);
+
             }
 
-            db.insert(TABLE_EVENTS_TO_EXPENSES, null, exvalues);
 
         }
 
@@ -668,6 +669,110 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         return events;
 
+    }
+
+    // ***********************************************************************
+    // STATISTICS METHODS
+    // ***********************************************************************
+
+
+    // Returns the sum of all expenses
+
+    public Double getGrantTotal() {
+
+        Double grandTotal = 0.0;
+        String selectQuery = "SELECT  * FROM " + TABLE_EXPENSES;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+
+                grandTotal += Double.parseDouble(cursor.getString(3));
+
+            } while (cursor.moveToNext());
+        }
+
+        return grandTotal;
+
+    }
+
+    public Hashtable<Category, Double> getCategoryTotals() {
+        Hashtable<Category, Double> totalsByCategory = new
+                Hashtable<Category, Double>();
+
+
+        String selectQuery = "SELECT  * FROM " + TABLE_EXPENSES;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+
+                if (cursor.getString(6) != null) {
+
+                    Category tempCat = fetchCategory(Integer.parseInt(cursor.getString(6)));
+                    double catAmount = Double.parseDouble(cursor.getString(3));
+
+                    if (totalsByCategory.containsKey(tempCat)) {
+                        double newAmount = totalsByCategory.get(tempCat);
+                        newAmount += catAmount;
+                        Double updatedAmount = new Double(newAmount);
+
+                        totalsByCategory.remove(catAmount);
+                        totalsByCategory.put(tempCat, catAmount);
+
+                    } else {
+                        double newAmount = catAmount;
+                        totalsByCategory.put(tempCat, (new Double(newAmount)));
+                    }
+                }
+            } while (cursor.moveToNext());
+        }
+
+        return totalsByCategory;
+
+    }
+
+
+    public ArrayList<Expense> getExpensesByDate(Date start, Date end){
+        ArrayList<Expense> expenses = new ArrayList<Expense>();
+        long startDate;
+        long endDate;
+
+        String expenseQuery = "SELECT  * FROM " + TABLE_EXPENSES + " WHERE ";
+        SQLiteDatabase db = this.getReadableDatabase();
+
+
+        if(start == null && end == null){
+            return getAllExpenses();
+        }
+        else if(start != null){
+            startDate = start.getTime();
+            expenseQuery = expenseQuery + KEY_EXDATE + " > " + startDate;
+
+        }
+        else if(end != null){
+            endDate = end.getTime();
+            expenseQuery = expenseQuery + KEY_EXDATE + " < " + endDate;
+
+        }
+        else{
+            startDate = start.getTime();
+            endDate = end.getTime();
+            expenseQuery = expenseQuery + KEY_EXDATE + " BETWEEN " +startDate
+            + " AND " + endDate;
+        }
+
+        Cursor cursor = db.rawQuery(expenseQuery, null);
+
+
+        cursor.close();
+        return expenses;
     }
 
 
