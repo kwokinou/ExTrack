@@ -496,11 +496,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
         int eventID = event.getEventId();
 
-
-//        query(String table, String[]columns, String selection, String[]
-//        selectionArgs, String groupBy, String having, String orderBy, String
-//        limit)
-
         cursor = db.query(TABLE_EVENTS_TO_EXPENSES, null, KEY_EVENT_ID + "=" +
                 String.valueOf
                         (eventID), null, null, null, null);
@@ -738,6 +733,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
+    // ************************************************************************
+    // QUery Methods
+    // ************************************************************************
 
     public ArrayList<Expense> getExpensesByDate(Date start, Date end){
         ArrayList<Expense> expenses = new ArrayList<Expense>();
@@ -770,10 +768,78 @@ public class DBHelper extends SQLiteOpenHelper {
 
         Cursor cursor = db.rawQuery(expenseQuery, null);
 
+        if (cursor.moveToFirst()) {
+            do {
+                Category tempCat = null;
+                String cat = cursor.getString(6);
+
+                if (cat == null || cat.isEmpty() || cat.equalsIgnoreCase("null")) {
+                    tempCat = null;
+                } else {
+                    tempCat = fetchCategory(Integer.parseInt(cat));
+                }
+
+                Expense expense = new Expense(
+                        Integer.parseInt(cursor.getString(0)),      //id
+                        cursor.getString(1),                        //vendor
+                        cursor.getString(2),                        //currency
+                        Double.parseDouble(cursor.getString(3)),    //amount
+                        cursor.getString(4),                        //receipt
+                        Long.parseLong(cursor.getString(5)),      //dateStamp
+                        //             fetchCategory(Integer.parseInt(cursor.getString(6)))
+                        tempCat
+                );
+                expenses.add(expense);
+            } while (cursor.moveToNext());
+        }
 
         cursor.close();
         return expenses;
     }
+
+
+    public ArrayList<Expense> getExpensesByCategory(Category category) {
+
+        ArrayList<Expense> expenses = new ArrayList<Expense>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        int catID = category.getId();
+
+        Cursor cursor = db.query(TABLE_EVENTS_TO_EXPENSES, null,
+                KEY_EXCAT + "=" +
+                        String.valueOf
+                                (catID), null, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Category tempCat = null;
+                String cat = cursor.getString(6);
+
+                if (cat == null || cat.isEmpty() || cat.equalsIgnoreCase("null")) {
+                    tempCat = null;
+                } else {
+                    tempCat = fetchCategory(Integer.parseInt(cat));
+                }
+
+                Expense expense = new Expense(
+                        Integer.parseInt(cursor.getString(0)),      //id
+                        cursor.getString(1),                        //vendor
+                        cursor.getString(2),                        //currency
+                        Double.parseDouble(cursor.getString(3)),    //amount
+                        cursor.getString(4),                        //receipt
+                        Long.parseLong(cursor.getString(5)),      //dateStamp
+                        //             fetchCategory(Integer.parseInt(cursor.getString(6)))
+                        tempCat
+                );
+                expenses.add(expense);
+
+            } while (cursor.moveToNext());
+        }
+        return expenses;
+
+    }
+
+
+
 
 
 }
