@@ -39,11 +39,6 @@ public class EditEventActivity extends AppCompatActivity {
     Event event;
     int layout;
 
-
-    ArrayList<Expense> a = new ArrayList<>();
-
-
-
     ArrayList<Expense> allExpenses;
     ArrayList<Expense> newExpenses;
   //  ArrayList<Expense> unAddedExpenses;
@@ -140,12 +135,13 @@ public class EditEventActivity extends AppCompatActivity {
         //newExpenses.clear();
        // unAddedExpenses.clear();
 
-        Iterator<Expense> itr = curExpenses.iterator();
 
-        while(itr.hasNext()) {
-            newExpenses.add(itr.next());
+      //  Iterator<Expense> itr = curExpenses.iterator();
+
+        //while(itr.hasNext()) {
+         //   newExpenses.add(itr.next());
            // Toast.makeText(getApplicationContext(), event.getExpenses().get(1).getExVendor(), Toast.LENGTH_LONG).show();
-        }
+        //}
 
         ((EditText) findViewById(R.id.eventName)).setText(event.getEventName()); //prefill event name
         ((EditText) findViewById(R.id.limitAmt)).setText(String.valueOf(event.getLimit())); //prefill limit
@@ -183,9 +179,12 @@ public class EditEventActivity extends AppCompatActivity {
                 event.setExpenses(newExpenses);
 
                 db.updateEvent(event);
-                //event = db.fetchEvent(id);
 
-//Toast.makeText(getApplicationContext(), event.getExpenses().get(0).getExVendor() + event.getExpenses().get(1).getExVendor(), Toast.LENGTH_LONG).show();
+Toast.makeText(getApplicationContext(), event.getExpenses().get(0).getExVendor() + event.getExpenses().get(1).getExVendor(), Toast.LENGTH_LONG).show();
+
+                Event e = db.getAllEvents().get(position);
+
+                Toast.makeText(getApplicationContext(), e.getExpenses().get(1).getExVendor(), Toast.LENGTH_LONG).show();
 
                 finish();
                 break;
