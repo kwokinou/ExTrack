@@ -618,7 +618,6 @@ public class DBHelper extends SQLiteOpenHelper {
                 exvalues.put(KEY_EVENT_ID, eventID);
                 exvalues.put(KEY_EXPENSE_ID, e.getId());
                 db.insert(TABLE_EVENTS_TO_EXPENSES, null, exvalues);
-
             }
             
         }
