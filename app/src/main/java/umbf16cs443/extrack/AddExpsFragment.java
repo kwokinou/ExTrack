@@ -26,46 +26,27 @@ public class AddExpsFragment extends ListFragment {
     int layout;
     Event curEvent;
     DBHelper db;
-    ArrayList<Expense> newExpenses, allExpenses;
-    ArrayList<Expense> eventExpenses, unAddedExpenses;
-    //ArrayList<Expense> unAddedExpenses = new ArrayList<>();
+    ArrayList<Expense> newExpenses, allExpenses, unAddedExpenses;
     ArrayAdapter<Expense> expAdapter;
-
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-       // db = ((EditEventActivity) getActivity()).getDb();
         curEvent = ((EditEventActivity) getActivity()).getEvent();
         allExpenses = ((EditEventActivity)getActivity()).getAllExpenses();
-        //expenses = curEvent.getExpenses();
         newExpenses = ((EditEventActivity) getActivity()).getNewExpenses();
-
-  //      eventExpenses = curEvent.getExpenses();
 
         unAddedExpenses = new ArrayList<>();
 
-        //if (eventExpenses.size()==0)
-          //  unAddedExpenses = expenses;
+        //determine expenses that are not included in the new expense list and show to user
+        for (Expense e : allExpenses)
+                unAddedExpenses.add(e);
 
-        //for(int i = 0; i < expenses.size(); i++)
-          //  unAddedExpenses.add(i, expenses.get(i));
-
-        //else{
-            Iterator<Expense> itr = allExpenses.iterator();
-           // //Iterator<Expense> itr2 = curExpenses.iterator();
-
-            while(itr.hasNext()){
-                Expense e = itr.next();
-                if(!newExpenses.contains(e) && !unAddedExpenses.contains(e))
-                    unAddedExpenses.add(e);
-            }
-
-
-       // newExpenses = curEvent.getNewExpenses();
-       // unAddedExpenses = curEvent.getUnAddedExpenses();
+        for (int i = 0; i < newExpenses.size(); i++)
+            for (int j = 0; j < unAddedExpenses.size(); j++)
+                if(unAddedExpenses.get(j).getId() == newExpenses.get(i).getId())
+                    unAddedExpenses.remove(j);
 
         layout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
                 android.R.layout.simple_list_item_activated_1 : android.R.layout.simple_list_item_1;
@@ -86,27 +67,19 @@ public class AddExpsFragment extends ListFragment {
         deleteDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //if(eventExpenses == null){
-                  //  int id = curEvent.getEventId();
-             //       curEvent.addExpense(e);
-               //     db.updateEvent(curEvent);
-                 //   curEvent = db.fetchEvent(id);
-                    //expenses.add(e);
-                    //unAddedExpenses.remove(e);
 
-                //((EditEventActivity) getActivity()).getUnAddedExpenses().remove(e);
-
-                //newExpenses.add(e);
+                //add selected expense to new expense list
                 if (!((EditEventActivity) getActivity()).getNewExpenses().contains(e))
                     ((EditEventActivity) getActivity()).getNewExpenses().add(e);
 
-
+                //remove from unadded expense list
+                unAddedExpenses.remove(pos);
 
                 EditEventActivity activity = (EditEventActivity) getActivity();
-                //prefill expense count
+                //update expense count
                 ((TextView) activity.findViewById(R.id.expCount)).setText(String.valueOf(activity.getNewExpenses().size()));
 
-
+                //update new expense total amt
                 Double amt = 0.0;
                 for (int i = 0; i < activity.getNewExpenses().size(); i++)
                     amt += activity.getNewExpenses().get(i).getExAmount();
@@ -114,13 +87,7 @@ public class AddExpsFragment extends ListFragment {
                 //display event total dollar amount
                 ((TextView) activity.findViewById(R.id.eventAmt)).setText(String.valueOf(amt));
 
-
-
-
                     updateView();
-                //}
-
-                //else Toast.makeText(getActivity().getApplicationContext(), "Expense already in event", Toast.LENGTH_SHORT).show();
             }
         });
         deleteDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
@@ -132,17 +99,8 @@ public class AddExpsFragment extends ListFragment {
 
     }
 
+    //refresh unadded expense list after adding to new expense
     public void updateView(){
-        unAddedExpenses.clear();
-        Iterator<Expense> itr = allExpenses.iterator();
-
-
-        while(itr.hasNext()){
-            Expense e = itr.next();
-            if(!newExpenses.contains(e) && !unAddedExpenses.contains(e))
-                unAddedExpenses.add(e);
-        }
-
         expAdapter = new ArrayAdapter<Expense>(getActivity(), layout, unAddedExpenses);
         setListAdapter(expAdapter);
     }

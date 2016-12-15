@@ -23,37 +23,24 @@ public class EventExpsFragment extends ListFragment {
 
     int layout;
     Event curEvent;
-    ArrayList<Expense> newExpenses;
     ArrayAdapter<Expense> expAdapter;
     DBHelper db;
 
+    //refresh expense list after removal
     public void updateView(){
-
-        //expenses = curEvent.getExpenses();
         expAdapter = new ArrayAdapter<Expense>(getActivity(), layout, ((EditEventActivity) getActivity()).getNewExpenses());
         setListAdapter(expAdapter);
     }
 
-
+    //load up new expense list
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-//        db = new DBHelper(getActivity());
-
-      //  db = ((EditEventActivity) getActivity()).getDb();
         curEvent = ((EditEventActivity) getActivity()).getEvent();
-
-        //expenses = ((EditEventActivity) getActivity()).getNewEventExpenses();
-
-        //expenses = ((EditEventActivity) getActivity()).getEventExpenses();
-
 
         layout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
                 android.R.layout.simple_list_item_activated_1 : android.R.layout.simple_list_item_1;
-
-       // expAdapter = new ArrayAdapter<Expense>(getActivity(), layout, curEvent.getExpenses());
 
         expAdapter = new ArrayAdapter<Expense>(getActivity(), layout, ((EditEventActivity) getActivity()).getNewExpenses());
         setListAdapter(expAdapter);
@@ -70,30 +57,15 @@ public class EventExpsFragment extends ListFragment {
         deleteDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //int id = curEvent.getEventId();
-                //curEvent.deleteExpense(e);
-                //expenses.remove(i);
 
-                //db.updateEvent(curEvent);
-                //curEvent = db.fetchEvent(id);
-                //ArrayList<Expense> temp = ((EditEventActivity)getActivity()).getUnAddedExpenses();
-                //if (!temp.contains(e))
-                  //  temp.add(e);
-                //((EditEventActivity)getActivity()).getEventExpenses().remove(e);
-
-                //expenses.remove(e);
-
+                //remove expense from new expense list
                 ((EditEventActivity) getActivity()).getNewExpenses().remove(e);
 
-                //if (!((EditEventActivity) getActivity()).getUnAddedExpenses().contains(e))
-                 //   ((EditEventActivity) getActivity()).getUnAddedExpenses().add(e);
-
-
                 EditEventActivity activity = (EditEventActivity) getActivity();
-                //prefill expense count
+                //update expense count
                 ((TextView) activity.findViewById(R.id.expCount)).setText(String.valueOf(activity.getNewExpenses().size()));
 
-
+                //update new expense list total amount
                 Double amt = 0.0;
                 for (int i = 0; i < activity.getNewExpenses().size(); i++)
                     amt += activity.getNewExpenses().get(i).getExAmount();

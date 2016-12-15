@@ -621,7 +621,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
             }
 
-
         }
 
         eventID = db.update(TABLE_EVENTS, values, KEY_ID + " = ?",
@@ -673,7 +672,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     // Returns the sum of all expenses
 
-    public Double getGrantTotal() {
+    public Double getGrandTotal() {
 
         Double grandTotal = 0.0;
         String selectQuery = "SELECT  * FROM " + TABLE_EXPENSES;

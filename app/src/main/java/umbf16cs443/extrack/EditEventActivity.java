@@ -40,11 +40,10 @@ public class EditEventActivity extends AppCompatActivity {
     int layout;
 
     ArrayList<Expense> allExpenses;
-    ArrayList<Expense> newExpenses;
-  //  ArrayList<Expense> unAddedExpenses;
+    ArrayList<Expense> newExpenses; //new Expense list for event
     ArrayList<Expense> curExpenses;
 
-
+//*******getters for fragment******************************************
     public Event getEvent(){
         return event;
     }
@@ -53,18 +52,14 @@ public class EditEventActivity extends AppCompatActivity {
         return allExpenses;
     }
 
-    //public ArrayList<Expense> getUnAddedExpenses(){
-      //  return unAddedExpenses;
-    //}
-
     public ArrayList<Expense> getNewExpenses() {return newExpenses;}
-
-    //public ArrayList<Expense> getNewEventExpenses() {return newEventExpenses;}
 
     public DBHelper getDb(){
         return db;
     }
+//*********************************************************************
 
+    //feed in fragment for user to add expenses
     public void addExpenses(View view){
         //update the two main buttons colors
         Button btn1 = (Button) findViewById(R.id.addExps);
@@ -75,15 +70,15 @@ public class EditEventActivity extends AppCompatActivity {
         btn2.setTextColor(Color.WHITE);
         btn2.setBackgroundResource(R.drawable.buttonshape);
 
-
         AddExpsFragment addExpsFragment = new AddExpsFragment();
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container2, addExpsFragment);
         transaction.commit();
-
     }
 
+    //feed in fragment for event's current expense list
+    //prompt user to delete existing expenses
     public void showCurExpenses(View view){
         //update the two main buttons colors
         Button btn1 = (Button) findViewById(R.id.curExps);
@@ -93,7 +88,6 @@ public class EditEventActivity extends AppCompatActivity {
         Button btn2 = (Button) findViewById(R.id.addExps);
         btn2.setTextColor(Color.WHITE);
         btn2.setBackgroundResource(R.drawable.buttonshape);
-
 
         if(newExpenses.size() > 0){
             EventExpsFragment eventExpsFragment = new EventExpsFragment();
@@ -126,22 +120,12 @@ public class EditEventActivity extends AppCompatActivity {
 
         allExpenses = db.getAllExpenses();
         curExpenses = event.getExpenses();
-      //  Toast.makeText(getApplicationContext(), String.valueOf(curExpenses.size()), Toast.LENGTH_LONG).show();
 
-
-    //    eventExpenses = new ArrayList<>();
         newExpenses = new ArrayList<>();
-      //  unAddedExpenses = new ArrayList<>();
-        //newExpenses.clear();
-       // unAddedExpenses.clear();
 
-
-      //  Iterator<Expense> itr = curExpenses.iterator();
-
-        //while(itr.hasNext()) {
-         //   newExpenses.add(itr.next());
-           // Toast.makeText(getApplicationContext(), event.getExpenses().get(1).getExVendor(), Toast.LENGTH_LONG).show();
-        //}
+        //default newExpenses should include the current expense list
+        for(Expense e : curExpenses)
+            newExpenses.add(e);
 
         ((EditText) findViewById(R.id.eventName)).setText(event.getEventName()); //prefill event name
         ((EditText) findViewById(R.id.limitAmt)).setText(String.valueOf(event.getLimit())); //prefill limit
@@ -154,7 +138,6 @@ public class EditEventActivity extends AppCompatActivity {
 
         //display event's expenses by default
         showCurExpenses(null);
-
     }
 
     //include save and delete button in menu bar
@@ -167,7 +150,6 @@ public class EditEventActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
 
-            //TODO user clicked on save to store updated Event object
             //return to activity showing all Events
             case R.id.saveEvent:
 
@@ -175,16 +157,9 @@ public class EditEventActivity extends AppCompatActivity {
                 event.setEventName(((EditText)findViewById(R.id.eventName)).getText().toString());
                 event.setLimit(Long.valueOf(((EditText)findViewById(R.id.limitAmt)).getText().toString()));
 
-                //int id = event.getEventId();
-                event.setExpenses(newExpenses);
+                event.setExpenses(newExpenses);//update expense list
 
                 db.updateEvent(event);
-
-Toast.makeText(getApplicationContext(), event.getExpenses().get(0).getExVendor() + event.getExpenses().get(1).getExVendor(), Toast.LENGTH_LONG).show();
-
-                Event e = db.getAllEvents().get(position);
-
-                Toast.makeText(getApplicationContext(), e.getExpenses().get(1).getExVendor(), Toast.LENGTH_LONG).show();
 
                 finish();
                 break;

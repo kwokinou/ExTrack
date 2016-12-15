@@ -53,7 +53,7 @@ public class StatsHeadlineFragment extends ListFragment {
 
         switch (position){
             case 0:
-                Toast.makeText(getActivity().getApplicationContext(), "Grand Total is $" + stats.getDB().getGrantTotal(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity().getApplicationContext(), "Grand Total is $" + stats.getDB().getGrandTotal(), Toast.LENGTH_LONG).show();
                 break;
 
             case 1:
