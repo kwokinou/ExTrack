@@ -618,9 +618,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 exvalues.put(KEY_EVENT_ID, eventID);
                 exvalues.put(KEY_EXPENSE_ID, e.getId());
                 db.insert(TABLE_EVENTS_TO_EXPENSES, null, exvalues);
-
             }
-
+            
         }
 
         eventID = db.update(TABLE_EVENTS, values, KEY_ID + " = ?",
@@ -762,7 +761,7 @@ public class DBHelper extends SQLiteOpenHelper {
             startDate = start.getTime();
             endDate = end.getTime();
             expenseQuery = expenseQuery + KEY_EXDATE + " BETWEEN " +startDate
-                    + " AND " + endDate;
+            + " AND " + endDate;
         }
 
         Cursor cursor = db.rawQuery(expenseQuery, null);
