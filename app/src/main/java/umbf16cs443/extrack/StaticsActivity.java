@@ -53,9 +53,11 @@ public class StaticsActivity extends AppCompatActivity
         setTitle("Statistics");
 
         db = new DBHelper(this);
+        String grandTotalDisplay = String.format("%.2f", db.getGrandTotal());
 
-        //display grand total first
-        ((TextView) findViewById(R.id.grand_total)).setText("Grand Total: $ " + db.getGrandTotal());
+
+        ((TextView) findViewById(R.id.grand_total)).setText("Grand Total: $ "
+                + grandTotalDisplay);
         Calendar calendar = Calendar.getInstance();
 
         // Set start and end date to default
@@ -129,9 +131,11 @@ public class StaticsActivity extends AppCompatActivity
         for(Expense e: resultExps)
             total += e.getExAmount();
 
-        //display total value in UI
-        ((TextView) findViewById(R.id.totalByDates)).setText("$" + df.format(total));
-        total = 0; //reset
+
+        String totalDisplay = String.format("$ %.2f", total);
+
+        ((TextView) findViewById(R.id.totalByDates)).setText(totalDisplay);
+        total = 0;
 
         //feed exp list in UI
         expAdapter = new ArrayAdapter<Expense>(this, android.R.layout.simple_list_item_1, resultExps);
