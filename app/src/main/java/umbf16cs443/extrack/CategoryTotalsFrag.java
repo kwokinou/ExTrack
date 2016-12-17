@@ -10,12 +10,18 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+
 import java.lang.reflect.Array;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 
 import umbf16cs443.extrack.db.DBHelper;
 import umbf16cs443.extrack.db.models.Category;
@@ -60,12 +66,44 @@ public class CategoryTotalsFrag extends Fragment {
         Iterator<Category> itr = c.iterator();
         arr = new String[c.size()];
 
-        for (int i = 0; i < arr.length; i++)
-            arr[i] = itr.next() + " --- $" + Double.valueOf(catList.get(i)) + " --- " + df.format(catList.get(i)/db.getGrandTotal()*100) + "%";
+        List<BarDataSet> catDataSets
+
+        for (int i = 0; i < arr.length; i++) {
+
+            String catName = itr.next().toString();
+            arr[i] = catName + " --- $" + Double.valueOf(catList.get(i)) + " " +
+                    "--- " + df.format(catList.get(i) / db.getGrandTotal() * 100) + "%";
+
+            List<BarEntry> cattotalentry = new ArrayList<>();
+            cattotalentry.add(new BarEntry(i, Double.valueOf(catList.get(i));
+            BarDataSet cattotalset = new BarDataSet(cattotalentry,
+                    catName);
+
+
+        }
 
         lv = (ListView) (getActivity().findViewById(R.id.catTotalList));
 
         exAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, arr);
+
+        BarChart catTotalsChart = (BarChart) view.findViewById(R.id.cattotalchart);
+
+
+        //for()
+
+
+        BarData cattotaldata = new BarData(cattotalset);
+
+
+        catTotalsChart.setData(cattotaldata);
+        catTotalsChart.setFitBars(true);
+        catTotalsChart.invalidate();
+
+//        data.setBarWidth(0.9f); // set custom bar width
+//        chart.setData(data);
+//        chart.setFitBars(true); // make the x-axis fit exactly all bars
+//        chart.invalidate(); // refresh
+
 
         lv.setAdapter(exAdapter);
     }

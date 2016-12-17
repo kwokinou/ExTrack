@@ -12,8 +12,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.github.mikephil.charting.charts.LineChart;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -80,9 +83,11 @@ public class StaticsActivity extends AppCompatActivity
         ArrayList<Expense> result;
         ArrayAdapter<Expense> adapter;
 
+
         ListView lv = (ListView) findViewById(R.id.resultList);
 
         //call to get exps in a time frame
+
         result = db.getExpensesByCategory(cat);
 
         //calculate total value of these exps
