@@ -265,10 +265,6 @@ public class Event {
                     .eventName, this.eventTotal, this.limit);
         }
         return ret;
-//        return new String.format()"this.eventName + " : " + "total = $" +
-//                this.eventTotal +
-//                "  " + "limit =$" + this
-//                .limit)
 
     }
 
