@@ -82,27 +82,21 @@ public class StaticsActivity extends AppCompatActivity
 
         ListView lv = (ListView) findViewById(R.id.resultList);
 
-       // Category ca = db.getAllCategories().get(1);
-
         //call to get exps in a time frame
         result = db.getExpensesByCategory(cat);
 
-     //   if(result!=null) {
-            //calculate total value of these exps
-       //     for (Expense e : result)
-         //       total += e.getExAmount();
+        //calculate total value of these exps
+        for (Expense e : result)
+            total += e.getExAmount();
 
-            //display total value in UI
-       //     ((TextView) findViewById(R.id.totalVal)).setText("$" + df.format(total));
+        //display total value in UI
+        ((TextView) findViewById(R.id.totalVal)).setText("$" + df.format(total));
 
-            //feed exp list in UI
-       //     adapter = new ArrayAdapter<Expense>(this, android.R.layout.simple_list_item_1, result);
-         //   lv.setAdapter(adapter);
-      //  }
+        //feed exp list in UI
+        adapter = new ArrayAdapter<Expense>(this, android.R.layout.simple_list_item_1, result);
+        lv.setAdapter(adapter);
+
     }
-
-
-
 
 
 //code for displaying expenses in a time frame*****************************************************
