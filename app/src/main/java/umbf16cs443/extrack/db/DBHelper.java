@@ -521,7 +521,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public ArrayList<Event> getAllEvents() {
 
         ArrayList<Event> eventList = new ArrayList<Event>();
-        ArrayList<Expense> expenses = new ArrayList<Expense>();
+        //ArrayList<Expense> expenses = new ArrayList<Expense>();
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_EVENTS;
 
@@ -536,7 +536,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 Event event = new Event(
                         Integer.parseInt(cursor.getString(0)),   // id
                         cursor.getString(1),                     // name
-                        expenses,                                    // expenses
+                        new ArrayList<Expense>(),                // expenses
                         Long.parseLong(cursor.getString(2)),     // limit
                         Long.parseLong(cursor.getString(3)),     // start date
                         Long.parseLong(cursor.getString(4))      // end date
