@@ -818,7 +818,7 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         int catID = category.getId();
 
-        Cursor cursor = db.query(TABLE_EVENTS_TO_EXPENSES, null,
+        Cursor cursor = db.query(TABLE_EXPENSES, null,
                 KEY_EXCAT + "=" +
                         String.valueOf
                                 (catID), null, null, null, null);
