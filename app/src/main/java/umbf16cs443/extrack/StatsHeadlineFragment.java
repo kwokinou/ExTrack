@@ -2,6 +2,7 @@ package umbf16cs443.extrack;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.view.View;
@@ -10,6 +11,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Date;
+
 import umbf16cs443.extrack.db.DBHelper;
 
 /**
@@ -17,11 +20,11 @@ import umbf16cs443.extrack.db.DBHelper;
  */
 public class StatsHeadlineFragment extends ListFragment {
 
-    String[] StatsHeadlines = {
-            "Grand Total",
+    String [] StatsHeadlines = {
             "All Category Totals",
             "Expenses in a Time Frame",
-            "Events that Share an Expense"
+            "Expenses by Category",
+            "Events by Expense"
     };
 
     @Override
@@ -39,10 +42,7 @@ public class StatsHeadlineFragment extends ListFragment {
     @Override
     public void onStart() {
         super.onStart();
-
-        // When in two-pane layout, set the listview to highlight the selected list item
-        // (We do this during onStart because at the point the listview is available.)
-        //getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        //indicate the selected choice
         getListView().setSelector(R.drawable.pressedbuttonshape);
     }
 
@@ -53,10 +53,6 @@ public class StatsHeadlineFragment extends ListFragment {
 
         switch (position){
             case 0:
-                Toast.makeText(getActivity().getApplicationContext(), "Grand Total is $" + stats.getDB().getGrandTotal(), Toast.LENGTH_LONG).show();
-                break;
-
-            case 1:
                 CategoryTotalsFrag list = new CategoryTotalsFrag();
 
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -64,8 +60,23 @@ public class StatsHeadlineFragment extends ListFragment {
                 transaction.commit();
                 break;
 
+            case 1:
+                ExpsInTimeFrameFrag expsInTimeFrameFrag = new ExpsInTimeFrameFrag();
+
+                FragmentTransaction transaction2 = getActivity().getSupportFragmentManager().beginTransaction();
+                transaction2.replace(R.id.stats_container, expsInTimeFrameFrag );
+                transaction2.commit();
+                break;
+
+            case 2:
+                ExpsByCatFrag expsByCatFrag = new ExpsByCatFrag();
+                FragmentTransaction transaction3 = getActivity().getSupportFragmentManager().beginTransaction();
+                transaction3.replace(R.id.stats_container, expsByCatFrag );
+                transaction3.commit();
+                break;
+
             default:
-                Toast.makeText(getActivity().getApplicationContext(), "Invalid Entry", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity().getApplicationContext(), "Invalid Entry", Toast.LENGTH_SHORT).show();
         }
     }
 }

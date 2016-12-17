@@ -271,13 +271,8 @@ public class Expense {
 
     public String toString(){
 
-        if(!(exCategory == null)){
-            return "$" + exAmount.toString() + "  -  " + this.exVendor + " - " +
-                    exCategory.toString();
-        }
-
-        return "$" + exAmount.toString() + "  -  " + this.exVendor + " - " +
-                "none";
+        return String.format("%s | $%.2f | [%s] ", this.exVendor, this
+                .exAmount, this.exCategory.toString() );
 
     }
 

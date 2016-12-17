@@ -255,9 +255,16 @@ public class Event {
 
 
     public String toString() {
-        return this.eventName + " : " + "total = $" + this.eventTotal +
-                "  " + "limit =$" + this
-                .limit;
+        String ret;
+        if(this.limit == 0) {
+            ret = String.format("%s | total: $%.2f | limit: none", this
+                    .eventName, this.eventTotal);
+        }
+        else{
+            ret = String.format("%s | total: $%.2f | limit: $%d", this
+                    .eventName, this.eventTotal, this.limit);
+        }
+        return ret;
 
     }
 
