@@ -6,6 +6,7 @@ import android.support.v4.app.ListFragment;
 import android.widget.ArrayAdapter;
 
 import java.lang.reflect.Array;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
@@ -23,9 +24,8 @@ public class CategoryTotalsFrag extends ListFragment {
     DBHelper db;
     ArrayList<Double> catList;
     ArrayAdapter<String> exAdapter;
-
+    DecimalFormat df = new DecimalFormat("#.##");
     Collection c;
-
 
     String[] arr;
 
@@ -40,11 +40,7 @@ public class CategoryTotalsFrag extends ListFragment {
         int layout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
                 android.R.layout.simple_list_item_activated_1 : android.R.layout.simple_list_item_1;
 
-
-
-
         db = new DBHelper(getContext());
-        //catList = db.getAllCategories();
 
         catHash = db.getCategoryTotals();
 
@@ -55,7 +51,7 @@ public class CategoryTotalsFrag extends ListFragment {
         arr = new String[c.size()];
 
         for (int i = 0; i < arr.length; i++)
-            arr[i] = itr.next() + " --- " + Double.valueOf(catList.get(i));
+            arr[i] = itr.next() + " --- $" + Double.valueOf(catList.get(i)) + " --- " + df.format(catList.get(i)/db.getGrandTotal()*100) + "%";
 
         exAdapter = new ArrayAdapter<String>(getActivity(), layout, arr);
         setListAdapter(exAdapter);
