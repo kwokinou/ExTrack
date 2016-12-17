@@ -702,6 +702,10 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
+        // Index of all possible Categories
+        ArrayList<Category> catIndex = getAllCategories();
+
+
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
@@ -709,19 +713,31 @@ public class DBHelper extends SQLiteOpenHelper {
                 if (cursor.getString(6) != null) {
 
                     Category tempCat = fetchCategory(Integer.parseInt(cursor.getString(6)));
+                    int tempIndex = catIndex.indexOf(tempCat);
+
                     double catAmount = Double.parseDouble(cursor.getString(3));
 
-                    if (totalsByCategory.containsKey(tempCat)) {
-                        double newAmount = totalsByCategory.get(tempCat);
+                    // This is a weird workaround as hashtables and
+                    // arraylists work differently.  Despite overriding the
+                    // .equals method of category, hashtable defines equality
+                    // based on object id not .equals.  Arraylist, however,
+                    // does and therefor can be checked against to see if
+                    // tempkey is in the db.
+
+                    if (totalsByCategory.containsKey(catIndex.get(tempIndex))) {
+                        double newAmount = totalsByCategory.get(catIndex.get
+                                (tempIndex));
                         newAmount += catAmount;
                         Double updatedAmount = new Double(newAmount);
 
-                        totalsByCategory.remove(catAmount);
-                        totalsByCategory.put(tempCat, catAmount);
+                        totalsByCategory.remove(catIndex.get(tempIndex));
+                        totalsByCategory.put(catIndex.get(tempIndex),
+                                newAmount);
 
                     } else {
                         double newAmount = catAmount;
-                        totalsByCategory.put(tempCat, (new Double(newAmount)));
+                        totalsByCategory.put(catIndex.get(tempIndex), (new
+                                Double(newAmount)));
                     }
                 }
             } while (cursor.moveToNext());
