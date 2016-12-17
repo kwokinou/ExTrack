@@ -1,23 +1,34 @@
 package umbf16cs443.extrack;
 
+import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,6 +40,7 @@ import java.util.Set;
 import umbf16cs443.extrack.db.DBHelper;
 import umbf16cs443.extrack.db.models.Category;
 import umbf16cs443.extrack.db.models.Expense;
+import umbf16cs443.extrack.utility.StorageHelper;
 
 /**
  * Created by kwokin on 10/30/2016.
@@ -59,11 +71,32 @@ public class AddExpActivity extends AppCompatActivity
     Category exCat;                     // expense category
     DBHelper db;
 
+    //Image receipt attachment
+    Button attachReceipt;
+    ImageView receiptThumbnail;
+    private static final int CAMERA_CAPTURE_IMAGE = 1;
+
+    // Permissions Check
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_an_exp);
         setTitle("Add an Expense");
+
+        //Initialise Attach Receipt Button
+        attachReceipt = (Button)findViewById(R.id.attReceipt1);
+        receiptThumbnail = (ImageView)findViewById(R.id.imageButton1);
+        receiptThumbnail.setVisibility(View.INVISIBLE);
+
+        //get permissions
+        askForStoragePermission();
+
 
         db = new DBHelper(getApplicationContext());
         catArray = db.getAllCategories();
@@ -141,6 +174,8 @@ public class AddExpActivity extends AppCompatActivity
                         receiptString, //receipt
                         exDate, // date
                         exCat); //category
+
+                Log.v(TAG,"expense:vendor = "+expense.getExVendor()+"\ncurrency = "+expense.getCurrencyCode());
 
                 db.addExpense(expense);
                 finish();
@@ -293,4 +328,39 @@ public class AddExpActivity extends AppCompatActivity
         }
     }
 //end of code for setting up DatePicker*********************************************************
+
+    // Attach Receipt Method
+    private static final String TAG = "Extrack:AddExpActivity";
+    public void attachReceipt(View v){
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        StorageHelper storageHelper = new StorageHelper();
+        File directory = storageHelper.getPictureDirectory("IMG"); //have to pass Specific Prefic to the image name
+        receiptString = directory.getAbsolutePath();
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(directory));
+        startActivityForResult(cameraIntent, CAMERA_CAPTURE_IMAGE);
+        Toast.makeText(getApplicationContext(), "Image saved to SD Card", Toast.LENGTH_SHORT).show();
+    }
+
+    // Permission Check for Storage
+    // Storage Permission
+    private void askForStoragePermission() {
+        if (ContextCompat.checkSelfPermission(AddExpActivity.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(AddExpActivity.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                ActivityCompat.requestPermissions(AddExpActivity.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+            } else {
+                ActivityCompat.requestPermissions(AddExpActivity.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+            }
+        } else {
+            Toast.makeText(this, "Storage Write permission is already granted.", Toast.LENGTH_SHORT).show();
+        }
+        if (ContextCompat.checkSelfPermission(AddExpActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(AddExpActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                ActivityCompat.requestPermissions(AddExpActivity.this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+            } else {
+                ActivityCompat.requestPermissions(AddExpActivity.this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+            }
+        } else {
+            Toast.makeText(this, "Storage READ permission is already granted.", Toast.LENGTH_SHORT).show();
+        }
+    }
 }

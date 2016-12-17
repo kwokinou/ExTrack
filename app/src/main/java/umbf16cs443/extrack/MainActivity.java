@@ -5,8 +5,13 @@ import android.graphics.Color;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+
+import umbf16cs443.extrack.Services.NotificationService;
+import umbf16cs443.extrack.db.DBHelper;
+import umbf16cs443.extrack.db.models.Event;
 
 public class MainActivity extends AppCompatActivity
         implements ViewExpFragment.OnExpSelectedListener,
@@ -15,11 +20,28 @@ public class MainActivity extends AppCompatActivity
     boolean expView = true;
     ViewExpFragment viewExpFrag;
     ViewEventFragment viewEventFrag;
-
+    private static final String TAG="Extrac:MainActivity:";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        DBHelper db = new DBHelper(this);
+        //calling Notification Service
+        Intent notificationServiceIntent = new Intent(this, NotificationService.class);
+        Bundle notificationBundle = new Bundle();
+
+        Event event = db.getCurrentActiveEvent();
+        Log.v(TAG,"Id Current Active Event = "+event.getEventId());
+        if(event!=null){
+            notificationBundle.putInt("eventId",event.getEventId());
+        }else{
+            notificationBundle.putInt("eventId",0);
+        }
+        notificationServiceIntent.putExtras(notificationBundle);
+        startService(notificationServiceIntent);
+        Log.v(TAG,"Notification Service Called");
 
         viewExps(null);//Show Expenses listFragment by default
     }

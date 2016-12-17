@@ -664,6 +664,68 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
+    //*******************************************************************************
+    public ArrayList<Expense> getExpensesByEvent(Event event) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ArrayList<Expense> expenses = new ArrayList<>();
+        int eventID = event.getEventId();
+
+        Cursor cursor = db.query(TABLE_EVENTS_TO_EXPENSES, null,
+                KEY_EXPENSE_ID + "=" +
+                        String.valueOf
+                                (eventID), null, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Expense expense = fetchExpense(Integer.parseInt(cursor.getString(1)));
+                expenses.add(expense);
+
+            } while (cursor.moveToNext());
+        }
+        return expenses;
+
+    }
+
+    public List<Expense> getExpenseByCategory(int categoryID){
+        SQLiteDatabase db = this.getWritableDatabase();
+        List<Expense> expenses = new ArrayList<>();
+        String sql = "SELECT * FROM "+TABLE_EXPENSES+" WHERE "+KEY_EXCAT+"="+categoryID;
+
+        Cursor cursor = db.rawQuery(sql,null);
+        if(cursor.moveToFirst()){
+            do{
+                Expense expense = new Expense(Integer.parseInt(cursor.getString(0)),    // id
+                        cursor.getString(1),                      // vendor
+                        cursor.getString(2),                      // currency
+                        Double.parseDouble(cursor.getString(3)),  // amount
+                        cursor.getString(4),                      // receipt
+                        Long.parseLong(cursor.getString(5)),      // dateStamp
+                        null);
+                expenses.add(expense);
+            }while(cursor.moveToNext());
+        }
+        return expenses;
+    }
+
+    public Event getCurrentActiveEvent(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM "+TABLE_EVENTS +" ORDER BY "+KEY_EVENT_START_DATE+" LIMIT 1";
+        Cursor cursor = db.rawQuery(query,null);
+        Event event = null;
+        if(cursor.moveToFirst()){
+            event = new Event(
+                    Integer.parseInt(cursor.getString(0)),   // id
+                    cursor.getString(1),                     // name
+                    null,                                    // expenses
+                    Long.parseLong(cursor.getString(2)),     // limit
+                    Long.parseLong(cursor.getString(3)),     // start date
+                    Long.parseLong(cursor.getString(4))      // end date
+            );
+        }
+        return event;
+    }
+
+//*******************************************************************************
     // ***********************************************************************
     // STATISTICS METHODS
     // ***********************************************************************
