@@ -32,9 +32,6 @@ public class ExpsInTimeFrameFrag extends Fragment {
 
     Date start;
     Date end;
-    ListView lv;
-    ArrayList<Expense> resultExpList;
-    ArrayAdapter<Expense> arrayAdapter;
     TextView tv;
 
     @Override
@@ -47,6 +44,7 @@ public class ExpsInTimeFrameFrag extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        //dafault start and end date to totay's date
         tv = (TextView) getActivity().findViewById(R.id.startDateText);
 
         start = ((StaticsActivity)getActivity()).getStartDate();
@@ -59,17 +57,6 @@ public class ExpsInTimeFrameFrag extends Fragment {
         SimpleDateFormat simpleDate2 = new SimpleDateFormat("MM/dd/yyyy");
         tv.setText(simpleDate2.format(end));
 
-        //((TextView) getActivity().findViewById(R.id.startDateText)).setText(((StaticsActivity)getActivity()).getStartDate();
-
-       // lv = (ListView) getActivity().findViewById(R.id.expsListInTimeFrame);
-
-      //  startDateText = (TextView) getActivity().findViewById(R.id.startDateText);
-
-      //  resultExpList = ((StaticsActivity) getActivity()).getDB().getExpensesByDate(startDate, endDate);
-
-       // arrayAdapter = new ArrayAdapter<Expense>(getActivity(), android.R.layout.simple_list_item_1, resultExpList);
-
-       // lv.setAdapter(arrayAdapter);
     }
 
 
