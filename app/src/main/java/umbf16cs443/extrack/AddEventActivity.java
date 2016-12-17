@@ -72,18 +72,18 @@ public class AddEventActivity extends AppCompatActivity {
                         0);                             // end date
 
 //*************testing code for debugging only****************************
-                Event event1 = new Event(
-                        "test1",
-                        new ArrayList<Expense>(),
-                        1000,
-                        0,0);
-
-                event.addExpense(db.getAllExpenses().get(0));
-                event.addExpense(db.getAllExpenses().get(1));
-
-
+//                Event event1 = new Event(
+//                        "test1",
+//                        new ArrayList<Expense>(),
+//                        1000,
+//                        0,0);
+//
+//                event.addExpense(db.getAllExpenses().get(0));
+//                event.addExpense(db.getAllExpenses().get(1));
+//
+//
                 db.addEvent(event);
-                db.addEvent(event1);
+//                db.addEvent(event1);
 //*********************************************************
                 finish();
                 break;
