@@ -73,6 +73,11 @@ public class ViewExpFragment extends ListFragment {
                 startActivity(i);
                 break;
 
+            case R.id.stats:
+                Intent j = new Intent(getActivity(), StaticsActivity.class);
+                startActivity(j);
+                break;
+
             //user clicked on search an expense action button
             //alertdialog to get user input for search expenses
             case R.id.search:
@@ -112,8 +117,8 @@ public class ViewExpFragment extends ListFragment {
                 break;
 
             case R.id.setting:
-                Intent j = new Intent(getActivity(), SettingActivity.class);
-                startActivity(j);
+                Intent k = new Intent(getActivity(), SettingActivity.class);
+                startActivity(k);
                 break;
 
             default:
