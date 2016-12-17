@@ -46,7 +46,11 @@ public class StaticsActivity extends AppCompatActivity
         setTitle("Statistics");
 
         db = new DBHelper(this);
-        ((TextView) findViewById(R.id.grand_total)).setText("Grand Total: $ " + db.getGrandTotal());
+        String grandTotalDisplay = String.format("%.2f", db.getGrandTotal());
+
+
+        ((TextView) findViewById(R.id.grand_total)).setText("Grand Total: $ "
+                + grandTotalDisplay);
         Calendar calendar = Calendar.getInstance();
 
         // Set New Expense Variables To Defaults
@@ -80,7 +84,10 @@ public class StaticsActivity extends AppCompatActivity
         for(Expense e: resultExps)
             total += e.getExAmount();
 
-        ((TextView) findViewById(R.id.totalByDates)).setText("$" + df.format(total));
+
+        String totalDisplay = String.format("$ %.2f", total);
+
+        ((TextView) findViewById(R.id.totalByDates)).setText(totalDisplay);
         total = 0;
 
         expAdapter = new ArrayAdapter<Expense>(this, android.R.layout.simple_list_item_1, resultExps);

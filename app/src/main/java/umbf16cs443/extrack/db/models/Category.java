@@ -40,4 +40,17 @@ public class Category {
         return this.catName;
     }
 
+    @Override
+    public boolean equals(Object c) {
+        if (c instanceof Category) {
+
+            if (this.getId() == ((Category) c).getId()) {
+                return true;
+            }
+
+        }
+        return false;
+    }
+
+
 }
