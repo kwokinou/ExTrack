@@ -23,13 +23,13 @@ public class StatsHeadlineFragment extends ListFragment {
     String [] StatsHeadlines = {
             "All Category Totals",
             "Expenses in a Time Frame",
-            "Events that Share an Expense"
+            "Expenses by Category",
+            "Events by Expense"
     };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 
         // We need to use a different list item layout for devices older than Honeycomb
         int layout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
@@ -52,8 +52,6 @@ public class StatsHeadlineFragment extends ListFragment {
         StaticsActivity stats = (StaticsActivity) getActivity();
 
         switch (position){
-          //  case 0:
-            //    Toast.makeText(getActivity().getApplicationContext(), "Grand Total is $" + stats.getDB().getGrandTotal(), Toast.LENGTH_LONG).show();
             case 0:
                 CategoryTotalsFrag list = new CategoryTotalsFrag();
 
@@ -65,12 +63,17 @@ public class StatsHeadlineFragment extends ListFragment {
             case 1:
                 ExpsInTimeFrameFrag expsInTimeFrameFrag = new ExpsInTimeFrameFrag();
 
-                //CategoryTotalsFrag list2 = new CategoryTotalsFrag();
                 FragmentTransaction transaction2 = getActivity().getSupportFragmentManager().beginTransaction();
                 transaction2.replace(R.id.stats_container, expsInTimeFrameFrag );
                 transaction2.commit();
                 break;
 
+            case 2:
+                ExpsByCatFrag expsByCatFrag = new ExpsByCatFrag();
+                FragmentTransaction transaction3 = getActivity().getSupportFragmentManager().beginTransaction();
+                transaction3.replace(R.id.stats_container, expsByCatFrag );
+                transaction3.commit();
+                break;
 
             default:
                 Toast.makeText(getActivity().getApplicationContext(), "Invalid Entry", Toast.LENGTH_SHORT).show();

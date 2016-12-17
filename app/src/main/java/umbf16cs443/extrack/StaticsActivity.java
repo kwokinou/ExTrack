@@ -8,9 +8,11 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.text.DateFormat;
@@ -19,8 +21,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 import umbf16cs443.extrack.db.DBHelper;
+import umbf16cs443.extrack.db.models.Category;
 import umbf16cs443.extrack.db.models.Expense;
 
 /**
@@ -30,15 +34,18 @@ public class StaticsActivity extends AppCompatActivity
         implements DatePickerDialog.OnDateSetListener{
 
     DBHelper db;
-    boolean startD = true;
+    boolean startD = true; //determine if start date or end date is selected
 
     TextView tv;
     ArrayList<Expense> resultExps;
     ArrayAdapter<Expense> expAdapter;
-    double total = 0;
+    double total = 0; //display total for exps in a time frame
     DecimalFormat df = new DecimalFormat("#.##");
-    Date startDate;// = new GregorianCalendar(2016, Calendar.NOVEMBER, 1).getTime();
-    Date endDate;// = new GregorianCalendar(2016, Calendar.DECEMBER, 31).getTime();
+    Date startDate;// = new GregorianCalendar(2016, Calendar.DECEMBER, 1).getTime();
+    Date endDate;// = new GregorianCalendar(2016, Calendar.DECEMBER, 1).getTime();
+
+
+    Category cat;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +60,7 @@ public class StaticsActivity extends AppCompatActivity
                 + grandTotalDisplay);
         Calendar calendar = Calendar.getInstance();
 
-        // Set New Expense Variables To Defaults
+        // Set start and end date to default
         startDate = calendar.getTime();
         endDate = calendar.getTime();
     }
@@ -64,23 +71,63 @@ public class StaticsActivity extends AppCompatActivity
 
     public Date getEndDate() {return endDate;}
 
+    public void setCategory(Category c){ cat = c;}
+
+
+
+    public void findExpsByCat(View view){
+        int total = 0;
+        ArrayList<Expense> result;
+        ArrayAdapter<Expense> adapter;
+
+        ListView lv = (ListView) findViewById(R.id.resultList);
+
+       // Category ca = db.getAllCategories().get(1);
+
+        //call to get exps in a time frame
+        result = db.getExpensesByCategory(cat);
+
+     //   if(result!=null) {
+            //calculate total value of these exps
+       //     for (Expense e : result)
+         //       total += e.getExAmount();
+
+            //display total value in UI
+       //     ((TextView) findViewById(R.id.totalVal)).setText("$" + df.format(total));
+
+            //feed exp list in UI
+       //     adapter = new ArrayAdapter<Expense>(this, android.R.layout.simple_list_item_1, result);
+         //   lv.setAdapter(adapter);
+      //  }
+    }
+
+
+
+
+
+//code for displaying expenses in a time frame*****************************************************
+    //user clicks on start date
     public void pickStartDate(View view) {
         startD = true;
         DatePickerFragment picker = new DatePickerFragment();
         picker.show(getSupportFragmentManager(), "date");
     }
 
+    //user clicks on end date
     public void pickEndDate(View view) {
         startD = false;
         DatePickerFragment picker = new DatePickerFragment();
         picker.show(getSupportFragmentManager(), "date");
     }
 
+    //user wants to see result
     public void showExpsInTimeFrame(View view){
         ListView lv = (ListView) findViewById(R.id.expsListInTimeFrame);
 
+        //call to get exps in a time frame
         resultExps = db.getExpensesByDate(startDate, endDate);
 
+        //calculate total value of these exps
         for(Expense e: resultExps)
             total += e.getExAmount();
 
@@ -90,11 +137,10 @@ public class StaticsActivity extends AppCompatActivity
         ((TextView) findViewById(R.id.totalByDates)).setText(totalDisplay);
         total = 0;
 
+        //feed exp list in UI
         expAdapter = new ArrayAdapter<Expense>(this, android.R.layout.simple_list_item_1, resultExps);
-
         lv.setAdapter(expAdapter);
     }
-
 
     public void setDate(final Calendar calendar) {
         final DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM);
@@ -134,7 +180,7 @@ public class StaticsActivity extends AppCompatActivity
                     (DatePickerDialog.OnDateSetListener) getActivity(), year, month, day);
         }
     }
-
+//****************************End of DatePicker code*************************************************
 
 
 }

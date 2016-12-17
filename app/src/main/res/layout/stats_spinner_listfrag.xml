@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Please Select"
+        android:id="@+id/tv1" />
+
+    <Spinner
+        android:id="@+id/statSpinner"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+        android:layout_weight="0.04"
+        android:layout_below="@+id/tv1"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Total Here"
+        android:id="@+id/totalVal"
+        android:layout_gravity="right"
+        android:layout_marginEnd="29dp"
+        android:layout_below="@+id/go"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Go!"
+        android:id="@+id/go"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/totalVal"
+        android:layout_alignEnd="@+id/totalVal"
+        android:onClick="findExpsByCat"/>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/totalVal"
+        android:id="@+id/resultList"/>
+
+
+</RelativeLayout>
