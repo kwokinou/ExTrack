@@ -763,14 +763,14 @@ public class DBHelper extends SQLiteOpenHelper {
         if(start == null && end == null){
             return getAllExpenses();
         }
-        else if(start != null){
+        else if(start != null && end == null){
             startDate = start.getTime();
-            expenseQuery = expenseQuery + KEY_EXDATE + " > " + startDate;
+            expenseQuery = expenseQuery + KEY_EXDATE + " >= " + startDate;
 
         }
-        else if(end != null){
+        else if(end != null && start == null){
             endDate = end.getTime();
-            expenseQuery = expenseQuery + KEY_EXDATE + " < " + endDate;
+            expenseQuery = expenseQuery + KEY_EXDATE + " <= " + endDate;
 
         }
         else{
