@@ -197,6 +197,8 @@ public class AddExpActivity extends AppCompatActivity
         alert.setTitle("Add Category");
         alert.setView(edittext);
 
+
+
         alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -239,27 +241,30 @@ public class AddExpActivity extends AppCompatActivity
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         final Spinner currencySpinner = new Spinner(AddExpActivity.this);
 
-        alert.setMessage("Select the currency that corresponds to this " +
-                "expense.");
+        alert.setMessage("Unfortunately, due to the cruel reality of software" +
+                " deadlines, version 1 of ExTrack does not support setting " +
+                "currency beyond the default currency of $USD.  Check back " +
+                "soon though, as we are working hard to implement all of your" +
+                " favorite currencies!");
         alert.setTitle("Select Currency");
-
-        Set<Currency> allCurrencies = Currency.getAvailableCurrencies();
-        Currency[] currencies = allCurrencies.toArray(new
-                Currency[allCurrencies.size()]);
-
-
-        ArrayAdapter<Currency> currencyAdapter = new ArrayAdapter<Currency>
-                (getApplicationContext(), android.R.layout
-                        .simple_spinner_item, currencies);
-
-
-        currencyAdapter.setDropDownViewResource(android.R.layout
-                .simple_spinner_dropdown_item);
-        currencyAdapter.setDropDownViewResource(android.R.layout
-                .simple_spinner_dropdown_item);
-        currencySpinner.setAdapter(currencyAdapter);
-
-        alert.setView(currencySpinner);
+//
+//        Set<Currency> allCurrencies = Currency.getAvailableCurrencies();
+//        Currency[] currencies = allCurrencies.toArray(new
+//                Currency[allCurrencies.size()]);
+//
+//
+//        ArrayAdapter<Currency> currencyAdapter = new ArrayAdapter<Currency>
+//                (getApplicationContext(), android.R.layout
+//                        .simple_spinner_item, currencies);
+//
+//
+//        currencyAdapter.setDropDownViewResource(android.R.layout
+//                .simple_spinner_dropdown_item);
+//        currencyAdapter.setDropDownViewResource(android.R.layout
+//                .simple_spinner_dropdown_item);
+//        currencySpinner.setAdapter(currencyAdapter);
+//
+//        alert.setView(currencySpinner);
 
         currencySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -275,16 +280,18 @@ public class AddExpActivity extends AppCompatActivity
         alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                exCurrency = tempCurrency;
-                currencyText.setText(exCurrency.toString());
+//                exCurrency = tempCurrency;
+//                currencyText.setText(exCurrency.toString());
+        return;
+
             }
         });
 
-        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        });
+//        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//            }
+//        });
         alert.show();
     }
 //end of currency setting*************************************************************************
