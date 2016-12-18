@@ -41,11 +41,19 @@
         android:layout_alignParentStart="true"
         android:layout_alignEnd="@+id/tv2" />
 
+    <com.github.mikephil.charting.charts.BarChart
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:id="@+id/bargraph"
+        android:layout_weight="0.3"
+        android:layout_below="@id/go2">
+    </com.github.mikephil.charting.charts.BarChart>
+
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/resultList2"
-        android:layout_below="@+id/totalVal2" />
+        android:layout_below="@+id/bargraph" />
 
 
 </RelativeLayout>

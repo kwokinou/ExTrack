@@ -27,17 +27,32 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.utils.ColorTemplate;
+
+import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import umbf16cs443.extrack.db.DBHelper;
 import umbf16cs443.extrack.db.models.Category;
 import umbf16cs443.extrack.db.models.Event;
 import umbf16cs443.extrack.db.models.Expense;
+
+import static android.R.attr.entries;
 
 public class StatsActivity extends AppCompatActivity
         implements DatePickerDialog.OnDateSetListener{
@@ -58,6 +73,20 @@ public class StatsActivity extends AppCompatActivity
 
     Category cat; //used for displaying exps under a category
     Expense exp; //used for displaying events under an exp
+
+    //*****variables for expensesByCategory piechart
+    PieChart pieChart2;
+    List<PieEntry> entries2;
+    PieDataSet set2;
+    PieData data2;
+    //*********************************************
+
+    //variables for eventsByExpense bargraph*********
+    BarChart barChart;
+    List<BarEntry> entries3;
+    BarDataSet set3;
+    BarData data3;
+    //******************************************
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +116,7 @@ public class StatsActivity extends AppCompatActivity
         startDate = calendar.getTime();
         endDate = calendar.getTime();
 
+
     }
 
 //**********************activity getters and setters***************************************
@@ -99,6 +129,7 @@ public class StatsActivity extends AppCompatActivity
     public void setCategory(Category c){ cat = c;}
 
     public void setExpense(Expense e){exp = e;}
+
 //******************************************************************************************
 
     /**
@@ -160,12 +191,35 @@ public class StatsActivity extends AppCompatActivity
         //call to get exps in a time frame
         result = db.getEventsByExpense(exp);
 
-        //calculate total value of these exps
-        for (Event e : result)
-            total += e.getEventTotal();
+        barChart = (BarChart) findViewById(R.id.bargraph);
+        entries3 = new ArrayList<>();
 
-        //display total value in UI
-        ((TextView) findViewById(R.id.totalVal2)).setText("$" + df.format(total));
+        for (int i = 0; i < result.size(); i++)
+            entries3.add(new BarEntry((float) i, (float) result.get(i).getEventTotal().doubleValue()));
+
+        String[] eventNames = new String[result.size()];
+        for (int i =0; i < eventNames.length; i++)
+            eventNames[i] = result.get(i).getEventName();
+
+        set3 = new BarDataSet(entries3, "");
+
+        set3.setColors(ColorTemplate.VORDIPLOM_COLORS);
+        data3 = new BarData(set3);
+        data3.setValueFormatter(new MyCurrencyFormatter());
+        set3.setValueTextSize(9f);
+        barChart.setData(data3);
+        barChart.setFitBars(true);
+        barChart.setDrawValueAboveBar(true);
+        barChart.setDescription(null);
+        barChart.setTouchEnabled(true);
+        barChart.setDragEnabled(true);
+        barChart.setScaleEnabled(true);
+        barChart.getLegend().setEnabled(false);
+        barChart.getXAxis().setValueFormatter(new EventLabelFormatter(eventNames));
+
+        barChart.invalidate();
+
+        ((TextView) findViewById(R.id.totalVal2)).setText("");
 
         //feed exp list in UI
         adapter = new ArrayAdapter<Event>(this, android.R.layout.simple_list_item_1, result);
@@ -184,9 +238,17 @@ public class StatsActivity extends AppCompatActivity
         //call to get exps in a time frame
         result = db.getExpensesByCategory(cat);
 
+        //initiate piegraph elements
+        pieChart2 = (PieChart) findViewById(R.id.piegraph2);
+        entries2 = new ArrayList<>();
+
         //calculate total value of these exps
-        for (Expense e : result)
+        for (Expense e : result) {
             total += e.getExAmount();
+        }
+
+        for (Expense e: result)
+            entries2.add(new PieEntry((float) ((e.getExAmount().doubleValue())/total), e.getExVendor()));
 
         //display total value in UI
         ((TextView) findViewById(R.id.totalVal)).setText("$" + df.format(total));
@@ -194,6 +256,19 @@ public class StatsActivity extends AppCompatActivity
         //feed exp list in UI
         adapter = new ArrayAdapter<Expense>(this, android.R.layout.simple_list_item_1, result);
         lv.setAdapter(adapter);
+
+        //display piegraph
+        set2 = new PieDataSet(entries2, "");
+        set2.setColors(ColorTemplate.VORDIPLOM_COLORS);
+        set2.setValueTextSize(9f);
+        data2 = new PieData(set2);
+        data2.setValueFormatter(new MyPercentFormatter());
+        pieChart2.setNoDataText("Your Result Here");
+        pieChart2.setData(data2);
+        pieChart2.setUsePercentValues(true);
+        pieChart2.setCenterText("Expenses Anaylsis");
+        pieChart2.setDescription(null);
+        pieChart2.invalidate(); //display
 
     }
 //************************************************************************************************

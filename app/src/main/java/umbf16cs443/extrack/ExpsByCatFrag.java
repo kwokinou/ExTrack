@@ -10,7 +10,13 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+
 import java.util.ArrayList;
+import java.util.List;
 
 import umbf16cs443.extrack.db.models.Category;
 
@@ -27,6 +33,7 @@ public class ExpsByCatFrag extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 
         View rootView = inflater.inflate(R.layout.stats_expscat_listfrag, container, false);
+
 
         return rootView;
     }
@@ -55,6 +62,7 @@ public class ExpsByCatFrag extends Fragment {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+
 
     }
 
