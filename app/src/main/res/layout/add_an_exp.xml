@@ -101,6 +101,7 @@
         android:text="@string/attach_receipt"
         android:shadowDx="0"
         android:shadowDy="0"
+        android:onClick="attachReceipt"
         android:shadowRadius="0"
         android:id="@+id/attReceipt1"
         android:layout_alignTop="@+id/imageButton1"
