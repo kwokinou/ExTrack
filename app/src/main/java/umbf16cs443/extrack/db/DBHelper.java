@@ -818,6 +818,12 @@ public class DBHelper extends SQLiteOpenHelper {
         long startDate;
         long endDate;
 
+
+
+        Calendar calendar = Calendar.getInstance();
+
+
+
         String expenseQuery = "SELECT  * FROM " + TABLE_EXPENSES + " WHERE ";
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -826,18 +832,50 @@ public class DBHelper extends SQLiteOpenHelper {
             return getAllExpenses();
         }
         else if(start != null && end == null){
+
+            calendar.setTime(start);
+            calendar.set(Calendar.HOUR, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+
+            start = calendar.getTime();
             startDate = start.getTime();
+
             expenseQuery = expenseQuery + KEY_EXDATE + " >= " + startDate;
 
         }
         else if(end != null && start == null){
+
+            calendar.setTime(end);
+            calendar.set(Calendar.HOUR, 23);
+            calendar.set(Calendar.MINUTE, 59);
+            calendar.set(Calendar.SECOND, 59);
+
+            end = calendar.getTime();
             endDate = end.getTime();
+
             expenseQuery = expenseQuery + KEY_EXDATE + " <= " + endDate;
 
         }
         else{
+
+            calendar.setTime(start);
+            calendar.set(Calendar.HOUR, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+
+            start = calendar.getTime();
             startDate = start.getTime();
+
+            calendar.setTime(end);
+            calendar.set(Calendar.HOUR, 23);
+            calendar.set(Calendar.MINUTE, 59);
+            calendar.set(Calendar.SECOND, 59);
+
+            end = calendar.getTime();
             endDate = end.getTime();
+
+
             expenseQuery = expenseQuery + KEY_EXDATE + " BETWEEN " +startDate
             + " AND " + endDate;
         }
