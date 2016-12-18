@@ -23,6 +23,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import umbf16cs443.extrack.Services.PdfService;
 import umbf16cs443.extrack.db.DBHelper;
 import umbf16cs443.extrack.db.models.Event;
 import umbf16cs443.extrack.db.models.Expense;
@@ -166,6 +167,11 @@ public class EditEventActivity extends AppCompatActivity {
 
             //TODO generate pdf
             case R.id.pdf:
+                Intent pdfServiceIntent = new Intent(this, PdfService.class);
+                Bundle pdfBundle = new Bundle();
+                pdfBundle.putInt("eventId",event.getEventId());
+                pdfServiceIntent.putExtras(pdfBundle);
+                startService(pdfServiceIntent);
                 break;
 
             //user wants to deleted the selected Event object

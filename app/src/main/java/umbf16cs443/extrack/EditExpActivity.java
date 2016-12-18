@@ -8,16 +8,21 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
 
 import java.security.Timestamp;
 import java.text.DateFormat;
@@ -65,6 +70,11 @@ public class EditExpActivity extends AppCompatActivity
     DBHelper db;
     Expense exp; //Expense to be edited
     int position;
+
+    //Receipt Image Functionality
+    Button attachReceipt;
+    ImageView receiptImage;
+    private static final String TAG = "Extrack:EditExpActivity";
 
     @Override
     //TODO need to display previously saved receipt image
@@ -131,6 +141,28 @@ public class EditExpActivity extends AppCompatActivity
             }
         });
 //end of spinner for category*******************************************************************
+
+        //Revceipt Image
+        attachReceipt = (Button)findViewById(R.id.attReceipt1);
+        receiptImage = (ImageView)findViewById(R.id.imageButton1);
+        attachReceipt.setVisibility(View.INVISIBLE);
+        String receiptPath = exp.getExReceipt();
+        Log.v(TAG,"Receipt Image Path:"+receiptPath);
+        if(receiptPath!=null) {
+            Glide.with(this).load(exp.getExReceipt()).thumbnail(0.1f).into(receiptImage);
+            receiptImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent fullImageIntent = new Intent(getApplicationContext(), ShowReceiptFullImage.class);
+                    fullImageIntent.putExtra("imagePath", exp.getExReceipt());
+                    startActivity(fullImageIntent);
+                }
+            });
+        }else{
+            receiptImage.setImageResource(R.drawable.ic_add_black_24dp); // Need to download No Thumbnail Image
+        }
+
+
     }
 
     //include save button in menu bar
