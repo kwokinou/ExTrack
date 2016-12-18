@@ -3,9 +3,17 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <com.github.mikephil.charting.charts.PieChart
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:id="@+id/piegraph"
+        android:layout_weight="0.3">
+    </com.github.mikephil.charting.charts.PieChart>
+
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/catTotalList"/>
+        android:id="@+id/catTotalList"
+        android:layout_weight="0.7"/>
 
 </LinearLayout>

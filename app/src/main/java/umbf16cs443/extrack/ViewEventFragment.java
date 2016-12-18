@@ -74,7 +74,7 @@ public class ViewEventFragment extends ListFragment {
                 break;
 
             case R.id.stats:
-                Intent j = new Intent(getActivity(), StaticsActivity.class);
+                Intent j = new Intent(getActivity(), StatsActivity.class);
                 startActivity(j);
                 break;
 

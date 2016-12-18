@@ -105,7 +105,8 @@
         android:shadowRadius="0"
         android:id="@+id/attReceipt1"
         android:layout_alignTop="@+id/imageButton1"
-        android:layout_alignStart="@+id/add_category1" />
+        android:layout_alignStart="@+id/add_category1"
+        />
 
     <ImageButton
         android:layout_width="wrap_content"
@@ -116,6 +117,7 @@
         android:layout_alignParentStart="true"
         android:layout_marginBottom="53dp"
         android:layout_alignEnd="@+id/spinner1"
-        android:layout_below="@+id/spinner1" />
+        android:layout_below="@+id/spinner1"
+        />
 
 </RelativeLayout>

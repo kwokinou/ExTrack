@@ -10,7 +10,13 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+
 import java.util.ArrayList;
+import java.util.List;
 
 import umbf16cs443.extrack.db.models.Category;
 
@@ -26,7 +32,8 @@ public class ExpsByCatFrag extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 
-        View rootView = inflater.inflate(R.layout.stats_spinner_listfrag, container, false);
+        View rootView = inflater.inflate(R.layout.stats_expscat_listfrag, container, false);
+
 
         return rootView;
     }
@@ -35,9 +42,10 @@ public class ExpsByCatFrag extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         ((TextView)(getActivity()).findViewById(R.id.tv1)).setText("Select Category");
 
+        //load up categories in the spinner
         mSpinner = (Spinner) getActivity().findViewById(R.id.statSpinner);
 
-        catArray = ((StaticsActivity) getActivity()).getDB().getAllCategories();
+        catArray = ((StatsActivity) getActivity()).getDB().getAllCategories();
 
         adapter = new ArrayAdapter<Category>(getActivity(), android.R.layout
                 .simple_spinner_item,
@@ -47,13 +55,14 @@ public class ExpsByCatFrag extends Fragment {
         mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                ((StaticsActivity)getActivity()).setCategory((Category)parent.getItemAtPosition(position));
+                ((StatsActivity)getActivity()).setCategory((Category)parent.getItemAtPosition(position));
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+
 
     }
 

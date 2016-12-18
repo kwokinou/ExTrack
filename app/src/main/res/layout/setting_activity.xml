@@ -8,7 +8,7 @@
 <TextView
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:text="Version 1 of this app will default all expense to USD currency"
+    android:text="Version 1 of this app will default all expenses to USD currency"
     android:textSize="20sp"/>
 
 </LinearLayout>

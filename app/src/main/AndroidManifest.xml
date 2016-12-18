@@ -26,6 +26,15 @@
         <service android:name=".Services.PdfService"/>
         <service android:name=".Services.NotificationService"/>
         <activity android:name=".StaticsActivity"/>
+        <activity android:name=".AddExpActivity" />
+        <activity android:name=".AddEventActivity" />
+        <activity android:name=".EditExpActivity" />
+        <activity android:name=".EditEventActivity" />
+        <activity android:name=".SettingActivity" />
+        <activity
+            android:name=".StatsActivity"
+            android:label="@string/title_activity_stats"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
