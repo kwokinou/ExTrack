@@ -37,6 +37,7 @@ public class EvtsByExpFrag extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         ((TextView)(getActivity()).findViewById(R.id.tv2)).setText("Select Expense");
 
+        //load up spinner with all expenses
         mSpinner = (Spinner) getActivity().findViewById(R.id.statSpinner2);
 
         expArray = ((StatsActivity) getActivity()).getDB().getAllExpenses();

@@ -35,6 +35,7 @@ public class ExpsByCatFrag extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         ((TextView)(getActivity()).findViewById(R.id.tv1)).setText("Select Category");
 
+        //load up categories in the spinner
         mSpinner = (Spinner) getActivity().findViewById(R.id.statSpinner);
 
         catArray = ((StatsActivity) getActivity()).getDB().getAllCategories();

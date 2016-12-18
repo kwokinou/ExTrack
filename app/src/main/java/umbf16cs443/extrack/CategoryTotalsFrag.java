@@ -52,6 +52,7 @@ public class CategoryTotalsFrag extends Fragment {
 
         db = new DBHelper(getContext());
 
+        //display all categories with their total values and % to the grand total
         catHash = db.getCategoryTotals();
 
         catList = new ArrayList<Double>(catHash.values());
