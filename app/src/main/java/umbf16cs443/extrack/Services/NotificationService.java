@@ -19,7 +19,7 @@ import umbf16cs443.extrack.db.models.Event;
 
 public class NotificationService extends IntentService {
     private static final String TAG="Extrack:Nf_Service:";
-
+    private static final Long DELAY_TIME=1000*60*60L;
     public NotificationService() {
         super("Notification Service");
     }
@@ -33,7 +33,7 @@ public class NotificationService extends IntentService {
             public void run() {
                 while(true){
                     try {
-                        Thread.sleep(10000);
+                        Thread.sleep(DELAY_TIME);
                     }catch(Exception e){
                         e.printStackTrace();
                     }
