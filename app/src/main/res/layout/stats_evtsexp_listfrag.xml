@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Please Select"
+        android:id="@+id/tv2" />
+
+    <Spinner
+        android:id="@+id/statSpinner2"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_weight="0.04"
+        android:layout_below="@+id/tv2"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Total Here"
+        android:id="@+id/totalVal2"
+        android:layout_gravity="right"
+        android:layout_marginEnd="29dp"
+        android:layout_alignBottom="@+id/go2"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Go!"
+        android:id="@+id/go2"
+        android:onClick="findEvtsByExp"
+        android:layout_below="@+id/statSpinner2"
+        android:layout_alignParentStart="true"
+        android:layout_alignEnd="@+id/tv2" />
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/resultList2"
+        android:layout_below="@+id/totalVal2" />
+
+
+</RelativeLayout>

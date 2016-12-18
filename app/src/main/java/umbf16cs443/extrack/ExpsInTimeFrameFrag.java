@@ -47,13 +47,13 @@ public class ExpsInTimeFrameFrag extends Fragment {
         //dafault start and end date to totay's date
         tv = (TextView) getActivity().findViewById(R.id.startDateText);
 
-        start = ((StaticsActivity)getActivity()).getStartDate();
+        start = ((StatsActivity)getActivity()).getStartDate();
         SimpleDateFormat simpleDate = new SimpleDateFormat("MM/dd/yyyy");
         tv.setText(simpleDate.format(start));
 
         tv = (TextView) getActivity().findViewById(R.id.endDateText);
 
-        end = ((StaticsActivity)getActivity()).getEndDate();
+        end = ((StatsActivity)getActivity()).getEndDate();
         SimpleDateFormat simpleDate2 = new SimpleDateFormat("MM/dd/yyyy");
         tv.setText(simpleDate2.format(end));
 
