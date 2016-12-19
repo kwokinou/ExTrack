@@ -88,6 +88,13 @@ public class StatsActivity extends AppCompatActivity
     BarData data3;
     //******************************************
 
+    //variables for expensesByDate bargraph*********
+    BarChart barChart2;
+    List<BarEntry> entries4;
+    BarDataSet set4;
+    BarData data4;
+    //******************************************
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,8 +122,6 @@ public class StatsActivity extends AppCompatActivity
         // Set start and end date to default
         startDate = calendar.getTime();
         endDate = calendar.getTime();
-
-
     }
 
 //**********************activity getters and setters***************************************
@@ -308,6 +313,35 @@ public class StatsActivity extends AppCompatActivity
         //feed exp list in UI
         expAdapter = new ArrayAdapter<Expense>(this, android.R.layout.simple_list_item_1, resultExps);
         lv.setAdapter(expAdapter);
+
+        //code for setting up bargraph***********************************************************
+        barChart2 = (BarChart) findViewById(R.id.bargraph2);
+        entries4 = new ArrayList<>();
+
+        for (int i = 0; i < resultExps.size(); i++)
+            entries4.add(new BarEntry((float) i, (float) resultExps.get(i).getExAmount().doubleValue()));
+
+        String[] vendorNames = new String[resultExps.size()];
+        for (int i =0; i < vendorNames.length; i++)
+            vendorNames[i] = resultExps.get(i).getExVendor();
+
+        set4 = new BarDataSet(entries4, "");
+
+        set4.setColors(ColorTemplate.VORDIPLOM_COLORS);
+        data4 = new BarData(set4);
+        data4.setValueFormatter(new MyCurrencyFormatter());
+        set4.setValueTextSize(9f);
+        barChart2.setData(data4);
+        barChart2.setFitBars(true);
+        barChart2.setDrawValueAboveBar(true);
+        barChart2.setDescription(null);
+        barChart2.setTouchEnabled(true);
+        barChart2.setDragEnabled(true);
+        barChart2.setScaleEnabled(true);
+        barChart2.getLegend().setEnabled(false);
+        barChart2.getXAxis().setValueFormatter(new EventLabelFormatter(vendorNames));
+        barChart2.invalidate();
+        //****************************************************************************************
     }
 
     //datepicker code******************************************************************************
