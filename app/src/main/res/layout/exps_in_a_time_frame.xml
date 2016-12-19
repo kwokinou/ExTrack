@@ -47,7 +47,7 @@
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/endDateText"
+        android:layout_below="@+id/bargraph2"
         android:id="@+id/expsListInTimeFrame"/>
 
     <TextView
@@ -68,6 +68,14 @@
         android:layout_alignBottom="@+id/startDate"
         android:layout_alignStart="@+id/totalByDates"
         android:onClick="showExpsInTimeFrame"/>
+
+    <com.github.mikephil.charting.charts.BarChart
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:id="@+id/bargraph2"
+        android:layout_weight="0.3"
+        android:layout_below="@id/endDate">
+    </com.github.mikephil.charting.charts.BarChart>
 
 
 </RelativeLayout>
