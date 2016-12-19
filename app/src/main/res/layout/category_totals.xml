@@ -5,15 +5,15 @@
 
     <com.github.mikephil.charting.charts.PieChart
         android:layout_width="match_parent"
-        android:layout_height="400dp"
+        android:layout_height="300dp"
         android:id="@+id/piegraph"
         android:layout_weight="0.3">
     </com.github.mikephil.charting.charts.PieChart>
 
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="300dp"
         android:id="@+id/catTotalList"
-        android:layout_weight="0.7"/>
+        android:layout_weight="0.6"/>
 
 </LinearLayout>
