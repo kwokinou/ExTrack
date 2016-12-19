@@ -44,6 +44,9 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -300,6 +303,14 @@ public class StatsActivity extends AppCompatActivity
         //call to get exps in a time frame
         resultExps = db.getExpensesByDate(startDate, endDate);
 
+        //sort the result by dates
+        Collections.sort(resultExps, new Comparator<Expense>() {
+            @Override
+            public int compare(Expense o1, Expense o2) {
+                return o1.getExDate().compareTo(o2.getExDate());
+            }
+        });
+
         //calculate total value of these exps
         for(Expense e: resultExps)
             total += e.getExAmount();
@@ -321,9 +332,17 @@ public class StatsActivity extends AppCompatActivity
         for (int i = 0; i < resultExps.size(); i++)
             entries4.add(new BarEntry((float) i, (float) resultExps.get(i).getExAmount().doubleValue()));
 
-        String[] vendorNames = new String[resultExps.size()];
-        for (int i =0; i < vendorNames.length; i++)
-            vendorNames[i] = resultExps.get(i).getExVendor();
+       // String[] vendorNames = new String[resultExps.size()];
+       // for (int i =0; i < vendorNames.length; i++)
+        //vendorNames[i] = resultExps.get(i).getExVendor();
+
+        DateFormat df = new SimpleDateFormat("MM/dd/yy");
+
+        String[] expDates = new String[resultExps.size()];
+        for(int i = 0; i < expDates.length; i++) {
+            Date date = resultExps.get(i).getExDate();
+            expDates[i] = df.format(date);
+        }
 
         set4 = new BarDataSet(entries4, "");
 
@@ -339,7 +358,7 @@ public class StatsActivity extends AppCompatActivity
         barChart2.setDragEnabled(true);
         barChart2.setScaleEnabled(true);
         barChart2.getLegend().setEnabled(false);
-        barChart2.getXAxis().setValueFormatter(new EventLabelFormatter(vendorNames));
+        barChart2.getXAxis().setValueFormatter(new EventLabelFormatter(expDates));
         barChart2.invalidate();
         //****************************************************************************************
     }
