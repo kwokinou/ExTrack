@@ -33,8 +33,8 @@ public class MainActivity extends AppCompatActivity
         Bundle notificationBundle = new Bundle();
 
         Event event = db.getCurrentActiveEvent();
-        Log.v(TAG,"Id Current Active Event = "+event.getEventId());
         if(event!=null){
+            Log.v(TAG,"Id Current Active Event = "+event.getEventId());
             notificationBundle.putInt("eventId",event.getEventId());
         }else{
             notificationBundle.putInt("eventId",0);
