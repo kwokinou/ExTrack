@@ -91,6 +91,14 @@ public class PDFHelper {
                         exp.add(expense.getCurrency().getCurrencyCode()+""+expense.getExAmount());
                         document.add(exp);
                         document.add(newLine);
+                        String receiptPath = expense.getExReceipt();
+                        if(receiptPath!=null) {
+                            Image receipt = Image.getInstance(receiptPath);
+                            receipt.setScaleToFitHeight(true);
+                            receipt.setWidthPercentage(20f);
+                            receipt.setScaleToFitLineWhenOverflow(true);
+                            document.add(receipt);
+                        }
                         totalCategoryAmount+=expense.getExAmount();
                     }
                 }
@@ -101,6 +109,15 @@ public class PDFHelper {
                 document.add(UNDERLINE);
                 totalAmount+=totalCategoryAmount; // have to add Row for this THE FINAL ROW IN REPORT
             }
+
+            document.add(newLine);
+            document.add(newLine);
+            document.add(UNDERLINE);
+            Paragraph total_str = new Paragraph("Grand Total");
+            total_str.add("$"+totalAmount);
+            document.add(total_str);
+            document.add(UNDERLINE);
+
 
             for(int i=0;i<5;i++)
                 document.add(newLine);
